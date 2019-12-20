@@ -1,0 +1,136 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+ <section class="my-account-wrapper section-padding dashboard_section">
+        	<div class="container-fluid">
+             <div class="ch-cont">
+        		<div class="row clearfix">
+
+
+        			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+        			{% include 'dashboard/dashboard_sidemenu.html' %}
+        		      		
+                    </div>
+
+
+        			<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                    <div class="myaccount-widget">
+                        <h3 class="title">Manage Addresses</h3>
+                        {% for message in messages %}
+                                    <div style="background-color:#238de9;;color: white;" class="alert alert-{{ message.tags }}">
+                                        <a class="close" href="#" data-dismiss="alert">×</a>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                                                
+                        <div id="del_address">
+                            <div class="col-md-12 no-padding">
+                                <a href="{% url 'add_new_address' %}" style="background-color:#238de9; " class="btn btn-info btn-sm" ><span class="glyphicon glyphicon-check"></span> Add New Address</a>
+
+                                <div class="row">
+                                    {% for user_address_row in user_address_detail_list %}
+                                    <div class="col-md-6">
+                                        <div class="address-single">
+                                            <div class="address-single-top"> <span class="add-type">{{ user_address_row.address_type|upper }}</span>
+                                                <div class="pull-right">
+                                                    
+                                                    <a href="{% url 'user_address_edit_view' user_address_row.id %}" class="add-action-btn edt-btn"><i class="fa fa-pencil"></i></a>
+                                                    {% if user_address_row.is_default == 'no' %}
+
+                                                    <a href="javascript:void(0)" onclick="delete_address('{{ user_address_row.id }}')" class="add-action-btn del-btn"><i class="fa fa-trash-o"></i></a>
+
+                     
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="address-single-detail">
+                                                <h4>{{ user_address_row.full_name }}</h4>
+                                                <p>{{ user_address_row.mobile_number }}</p>
+                                                <p>{{ user_address_row.email }}</p>
+                                                <p>{{ user_address_row.address }}</p>
+                                            </div>
+                                            {% if user_address_row.is_default == 'yes' %}
+                                                <span class="btn btn-info btn-sm" style="background: black; border-color: black">Default</span>
+                                            {% else %}
+                                            <!--<button type="button" onclick="change_status(143)" class="btn btn-info btn-sm"> <span class="glyphicon glyphicon-check"></span> Make Default</button>-->
+
+                                            <a href="javascript:void(0)" onclick="change_to_default_address('{{ user_address_row.id }}')" class="btn btn-info btn-sm" ><span class="glyphicon glyphicon-check"></span> Make Default</a>
+
+                                            {% endif %}
+                                           
+                                        </div>
+                                    </div>
+                                    
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                    </div>
+        		</div>
+        	</div>
+        </section>
+
+
+<script type="text/javascript">
+function delete_address(address_id)
+{
+    if(confirm('Are you sure'))
+    {
+    $.ajax({
+      url:"{% url 'user_address_delete' %}",
+      data:{address_id:address_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType:'json',
+      type:'post',
+      success: function(data)
+      {
+        // if(data.result == 1)
+        // {
+        //   Swal.fire({
+        //     position: 'middle',
+        //     type: 'success',
+        //     title: 'Address Deleted Successfully',
+        //     showConfirmButton: false,
+        //     timer: 10000
+        //   })
+        // }
+        location.reload(); 
+      }
+    });
+    }
+}
+function change_to_default_address(address_id)
+  {
+    if(confirm('Are you sure ?'))
+    {
+    $.ajax({
+      url:"{% url 'change_address_status' %}",
+      data:{address_id:address_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType:'json',
+      type:'post',
+      success: function(data)
+      {
+        // if(data.result == 1)
+        // {
+        //   Swal.fire({
+        //     position: 'middle',
+        //     type: 'success',
+        //     title: 'Address Status Changed Successfully',
+        //     showConfirmButton: false,
+        //     timer: 10000
+        //   })
+        // }
+        location.reload(); 
+      }
+    });
+    }
+  }
+</script>
+
+{% include 'common/footer.html' %}

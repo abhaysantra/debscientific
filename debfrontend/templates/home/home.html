@@ -1,0 +1,310 @@
+{% load static %}
+{% include 'common/header.html' %}
+    
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+          <a class="close" href="#" data-dismiss="alert">×</a>
+          {{ message }}
+      </div>
+    {% endfor %}
+    <!--slider area start-->
+    <section class="slider_section slider_two mb-50">
+        <div class="slider_area owl-carousel">
+            {% for slider_row in slider_list %}
+            <div class="single_slider d-flex align-items-center" data-bgimg="{{ slider_row.image.url }}">
+               <div class="container">
+                   <div class="row">
+                       <div class="col-12">
+                           <div class="slider_content">
+                                <h2>{{ slider_row.title_1 }}</h2>
+                                <h1>{{ slider_row.title_2 }}</h1>
+                                <a class="button" href="{{ slider_row.link }}">shopping now</a>
+                            </div>
+                       </div>
+                   </div>
+               </div>
+            </div>
+            {% endfor %}
+        </div>  
+    </section>
+    <!--slider area end-->
+    
+    <!--banner area start-->
+    <section class="banner_area mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="banner_container">
+                        <div class="single_banner">
+                            <div class="banner_thumb">
+                                <a href="#"><img src="{{ banner_det.0.banner_image.url }}" alt=""></a>
+                                <div class="banner_text">
+                                    <h3>{{ banner_det.0.title_1 }}</h3>
+                                    <h2>{{ banner_det.0.title_2 }}</h2>
+                                    <a href="{{ banner_det.0.link }}">Buy Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="single_banner">
+                            <div class="banner_thumb">
+                                <a href="#"><img src="{{ banner_det.1.banner_image.url }}" alt=""></a>
+                                <div class="banner_text">
+                                    <h3>{{ banner_det.1.title_1 }}</h3>
+                                    <h2>{{ banner_det.1.title_2 }}</h2>
+                                    <a href="{{ banner_det.1.link }}">Buy Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--banner area end-->
+    
+     <!--product area start-->
+
+    <!--product area end-->
+    
+     <!--featured categories area start-->
+    <!--  -->
+    <!--featured categories area end-->
+
+     <!--product area start-->
+    <section class="product_area mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="section_title">
+                       <h2><span> <strong>Our</strong>Products</span></h2>
+
+                    </div>
+                    <div class="product_carousel product_column5 owl-carousel">
+
+                    {% for product_row in product_list %}
+                        <div class="single_product"> 
+                            <div class="product_thumb">
+                                
+                                <a class="primary_img" href="{% url 'product_details' product_row.id product_row.product_slug %}">
+                                    {% for pro_img_row in product_image_list %}
+                                        {% if pro_img_row.product_id == product_row.id %}
+                                    <img src="{{ pro_img_row.product_list.url }}" alt="">
+                                        {% endif %}
+                                    {% endfor %}
+                                </a>
+                                    
+                            
+                                <!--<div class="action_links">
+                                    {% if product_row.price_available == 'yes' %}
+                                    <ul> 
+                                        {% if 'user_session_id' in request.session %}
+                                        
+                                            {% if product_row.id in product_wish_list %}
+                                                <li class="wishlist wp_color">
+                                                    <a href="javascript:void(0)" onclick="remove_from_wishlist('{{ product_row.id }}')" title="Remove from Wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                                </li>
+
+                                            {% else %}
+                                             <li class="wishlist">                    
+                                                <a href="javascript:void(0)" onclick="add_to_wishlist('{{ product_row.id }}')" title="Add to Wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                            </li>
+
+                                         {% endif %} 
+                                        
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                </div> -->
+                            </div>
+                            <div class="product_content">
+                                <div class="product_ratings">
+                                    <ul>
+                                    {% for i in 0|loop_range:product_row.avg_rating %}
+                                        <li class="active-blk-cus-ss"><i class="ion-ios-star"></i></li>
+                                    {% endfor %}
+                                    {% for i in 0|loop_range:product_row.remaining_rating %}
+                                        <li class="gray-back-cus"><i class="ion-ios-star"></i></li>
+                                    {% endfor %} 
+                                    </ul>
+                                </div>
+
+                                <div class="product_name">
+                                <h3><a href="{% url 'product_details' product_row.id product_row.product_slug %}">{{ product_row.product_name }}</a></h3>
+                                <p class="manufacture_product">
+                                    {% for pro_cate_list in all_category %}
+                                        {% if pro_cate_list.id == product_row.category_id %}
+                                            <a href="{% url 'product_list' pro_cate_list.id pro_cate_list.category_slug %}">
+                                    
+                                            {{ pro_cate_list.category_name }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                
+                                </p>
+                            </div>
+
+                                <div class="product_footer d-flex align-items-center">
+                                    {% if product_row.price_available == 'yes' %}
+                                    <div class="price_box">
+                                        <span class="regular_price"><i class="fa fa-inr" aria-hidden="true"></i> {{ product_row.sell_price }}</span>  
+                                    </div>
+                                    <!--<div class="add_to_cart">
+                                        <a href="javascript:void(0)" onclick="product_add_to_cart('{{ product_row.id }}','1')" title="add to cart"><span class="lnr lnr-cart"></span></a>
+                                    </div>-->
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                {% endfor %}
+
+                    </div>
+                </div>
+            </div> 
+                   
+        </div>
+    </section>
+    <!--product area end-->
+      <!--banner area start-->
+    <section class="banner_area banner_static mb-50 d-flex align-items-center" data-bgimg="{{ banner_det.2.banner_image.url }}">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="banner_text">
+                        <h2>{{ banner_det.2.title_1 }}</h2>
+                        <h1>{{ banner_det.2.title_2 }} </h1>
+                        <p>{{ banner_det.2.title_3 }}</p>
+                        <a href="{{ banner_det.2.link }}">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--banner area end-->
+
+
+    
+      <!--product area start-->
+    <section class="product_area mb-50 pa_mt">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section_title">
+                        <h2><span> <strong>Latest</strong>Products</span></h2>
+                    </div>
+                    <div class="product_carousel product_column5 owl-carousel">
+
+
+                    {% for latest_product_row in latest_product_list %}
+
+                        <div class="single_product">
+                            <div class="product_thumb">
+                                <a class="primary_img" href="{% url 'product_details' latest_product_row.id latest_product_row.product_slug %}">
+                                {% for pro_image_row in product_image_list %}
+                                    {% if pro_image_row.product_id == latest_product_row.id %}
+                                    <img src="{{ pro_image_row.product_list.url }}" alt="">
+                                    {% endif %}
+                                {% endfor %}
+                                </a>
+                                <div class="action_links">
+                                    {% if latest_product_row.price_available == 'yes' %}
+                                    <ul>
+                                        
+                                        {% if 'user_session_id' in request.session %}
+                                        
+                                            {% if latest_product_row.id in product_wish_list %}
+                                                <li class="wishlist wp_color">
+                                                    <a href="javascript:void(0)" onclick="remove_from_wishlist('{{ latest_product_row.id }}')" title="Remove from Wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                                </li>
+
+                                            {% else %}
+                                             <li class="wishlist">                    
+                                                <a href="javascript:void(0)" onclick="add_to_wishlist('{{ latest_product_row.id }}')" title="Add to Wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                            </li>
+
+                                         {% endif %} 
+                                        
+                                        {% endif %}
+                                        
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="product_content">
+                                <div class="product_ratings">
+                                    <ul>
+                                    {% for i in 0|loop_range:latest_product_row.avg_rating %}
+                                        <li class="active-blk-cus-ss"><i class="ion-ios-star"></i></li>
+                                    {% endfor %}
+                                    {% for i in 0|loop_range:latest_product_row.remaining_rating %}
+                                        <li class="gray-back-cus"><i class="ion-ios-star"></i></li>
+                                    {% endfor %} 
+                                    </ul>
+                                </div>
+                                 <div class="product_name">
+                                <h3><a href="{% url 'product_details' latest_product_row.id latest_product_row.product_slug %}">{{ latest_product_row.product_name }}</a></h3>
+                                <p class="manufacture_product">
+
+                                    {% for pro_cat_list in all_category %}
+                                        {% if pro_cat_list.id == latest_product_row.category_id %}
+                                        <a href="{% url 'product_list' pro_cat_list.id pro_cat_list.category_slug %}">
+                                            {{ pro_cat_list.category_name }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                                <div class="product_footer d-flex align-items-center">
+                                    {% if latest_product_row.price_available == 'yes' %}
+                                    <div class="price_box">
+                                        <span class="regular_price"><i class="fa fa-inr" aria-hidden="true"></i>{{ latest_product_row.sell_price }}</span>  
+                                    </div>
+                                    <!--<div class="add_to_cart">
+                                        <a href="javascript:void(0)" onclick="product_add_to_cart('{{ latest_product_row.id }}','1')" title="add to cart"><span class="lnr lnr-cart"></span></a>
+                                    </div> -->
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+
+                    </div>
+                </div>
+            </div> 
+                   
+        </div>
+    </section>
+    <!--product area end-->
+
+    <!--brand area start-->
+    
+    <!--brand area end-->
+    
+    <!--blog area start-->
+
+    <!--blog area end-->
+   
+    <div class="brand_area mb-42">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section_title">
+                        <h2><span> <strong>Brand</strong></span></h2>
+                    </div>
+                    <div class="brand_container owl-carousel">
+                        {% for brand_row in brand_list %}
+                        <div class="single_brand">
+                            <a href="javascript:void(0)"><img src="{{ brand_row.brand_image.url }}" alt=""></a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--call to action end-->
+    
+   {% include 'common/footer.html' %}

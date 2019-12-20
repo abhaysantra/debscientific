@@ -1,0 +1,294 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+
+<script src='//cdn.tinymce.com/4/tinymce.min.js'></script>
+  <style type="text/css">
+    .border-red {
+      outline: none;
+      border-color: #ff3333;
+      box-shadow: 0 0 10px #ff3333;
+    }
+  </style>
+
+  <script type="text/javascript">
+    tinymce.init({
+      selector: ".tinyarea",
+      theme: "modern",
+      menubar: "edit insert tools",
+      plugins: [
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "searchreplace wordcount visualblocks visualchars code fullscreen",
+        "insertdatetime media nonbreaking save table contextmenu directionality",
+        "emoticons template paste textcolor colorpicker textpattern imagetools"
+      ],
+      toolbar1: "undo redo | styleselect | bold italic| forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link preview",
+      image_advtab: true
+    });
+  </script>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        CATEGORY ADD
+        
+      </h1>
+      
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <!-- left column -->
+        
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-12">
+          <!-- Horizontal Form -->
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <!-- <h3 class="box-title">CATEGORY ADD</h3> -->
+            <div id="validation" style="color:red;"></div>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{% url 'category_insert' %}" method="post" enctype="multipart/form-data" id="categoryadd_form_validation">{% csrf_token %}
+              <div class="box-body">
+               <span style="color: rgb(255, 0, 0); padding-left: 2px;">(* fields are required)</span>
+               
+              <div class="form-group">
+                  <label for="parent_cat" class="col-sm-2 control-label">Parent Category</label>
+
+                <div class="col-sm-8">
+                    <select name="parent_cat" id="parent_cat" class="form-control" onchange="getsubcategory(this.value)">
+                    <option value="">Select</option>
+                    {% for parent_cat_list_row in parent_cat_list %}
+                      <option value="{{ parent_cat_list_row.id }}" >{{ parent_cat_list_row.category_name }}</option>
+                    {% endfor %}
+                    </select>
+                     <p class="help-block">(No need to select any category to upload in Parent Category)</p>
+                </div>
+                 
+              </div> 
+
+          <div class="form-group">
+                  <label for="sub_category" class="col-sm-2 control-label">Sub Category</label>
+
+                <div class="col-sm-8">
+                    <select name="sub_category" id="sub_category" class="form-control"  >
+                        <option value="0">Select</option>
+                          
+                    </select>
+                      <p class="help-block">(No need to select any category to upload in Sub Category)</p>
+                </div>
+                 
+              </div>
+
+              <div class="form-group">
+                  <label for="cat_name" class="col-sm-2 control-label">Category Name<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+
+                  <div class="col-sm-8">
+                    <input type="text" name="cat_name" id="cat_name" onkeyup="catname(this.value)" class="form-control" placeholder="Category name" value=""  autocomplete="off">
+                    
+                  </div>
+                 
+              </div>
+
+                <div class="form-group">
+                  <label for="cat_name" class="col-sm-2 control-label">Category slug<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+
+                  <div class="col-sm-8">
+                    <input type="text" name="cat_slug" id="cat_slug"  class="form-control" placeholder="Category slug">
+                    
+                  </div>
+                 
+              </div>
+
+              <div class="form-group">
+                  <label for="cat_desc" class="col-sm-2 control-label">Category Description</label>
+
+                  <div class="col-sm-8">
+                       <textarea class="tinyarea" name="cat_desc" id="cat_desc" style="height:100px"></textarea>
+                    
+                  </div>
+                 
+              </div>
+
+
+              <!-- <div class="form-group">
+                  <label for="image" class="col-sm-2 control-label">Category Banner(1920X670) <span style="color:red"></span></label>
+                  <div class="col-sm-8">
+                                        <input type="file" class="form-control" name="banner_logo" id="banner_logo" onchange="readURL(this);">
+                                        <img id="prof_pic" src="{% static 'image/no-image.jpg' %}"  alt="User Image" style="margin-top: 10px;width:90px;height:90px;" />
+                                    </div>
+                 
+                </div> -->
+
+              <div class="form-group">
+                  <label for="meta_tag" class="col-sm-2 control-label">Meta Tag Title<span style="color: rgb(255, 0, 0); padding-left: 2px;"></span></label>
+
+                  <div class="col-sm-8">
+                    <input type="text" name="meta_tag" id="meta_tag" class="form-control" placeholder="Meta Tag Title" value="">
+                    
+                  </div>
+                 
+              </div>
+
+              <div class="form-group">
+                  <label for="meta_desc" class="col-sm-2 control-label">Meta Tag Description<span style="color: rgb(255, 0, 0); padding-left: 2px;"></span></label>
+
+                  <div class="col-sm-8">
+                      <textarea class="tinyarea" name="meta_desc" id="meta_desc" style="height:100px"></textarea>
+                    
+                  </div>
+                 
+              </div>
+
+              <div class="form-group">
+                  <label for="meta_key" class="col-sm-2 control-label">Meta Tag Keyword<span style="color: rgb(255, 0, 0); padding-left: 2px;"></span></label>
+
+                  <div class="col-sm-8">
+                    <input type="text" name="meta_key" id="meta_key" class="form-control" placeholder="Meta Tag Keyword" value="">
+                    
+                  </div>
+                 
+              </div>
+              <div class="clearfix"></div> 
+             
+
+              <div class="form-group">
+                  <label for="status" class="col-sm-2 control-label">Status</label>
+
+                  <div class="col-sm-8">
+                    <select class="form-control" name="status" id="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                    </select>
+                    
+                  </div>
+                 
+              </div>
+
+              </div>
+             
+             
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <a href="{% url 'category_listview' %}" class="btn btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-info pull-right" onclick="return validation()">Submit</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+          <!-- general form elements disabled -->
+          
+          <!-- /.box -->
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  </div>
+ 
+
+<script type="text/javascript">
+  
+  function getsubcategory(parent_cat)
+  {
+    $.ajax({
+            type: "POST",
+            url:"{% url 'get_subcategory' %}",
+            data: {parent_cat:parent_cat, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType: "json",
+            async: false,
+            success: function(data)
+            {
+             
+              var keys = Object.keys(data); 
+              var values = Object.values(data); 
+              var total_row = keys.length;
+              var html_string='<option value="0"> Select </option>';
+
+              for (var i = 0; i < keys.length; i++) {
+                html_string+='<option value="'+keys[i]+'">'+values[i]+'</option>'; 
+              }
+
+              $('#sub_category').html(html_string);
+                
+            }
+        });
+  }
+
+  function readURL(input)
+    {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#prof_pic')
+                    .attr('src', e.target.result)
+                    .width(90)
+                    .height(90);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+   <script>
+     function catname(value)
+      {
+        var new_value = convertToSlug(value);
+        $("#cat_slug").val(new_value);
+        $("#meta_tag").val(new_value);
+      }
+
+      function convertToSlug(Text)
+      {
+        return Text
+        .toLowerCase()
+        .replace(/[^\w ]+/g,'')
+        .replace(/ +/g,'-');
+      }
+   </script>
+   <script type="text/javascript">
+     function validation()
+     {
+      var cat_name=$('#cat_name').val();
+      if(cat_name=="")
+      {
+        $('#cat_name').addClass('border-red');
+        return false;
+      }
+      else {
+        $('#cat_name').removeClass('border-red');
+            }
+      
+      
+            
+      
+   }
+   </script>
+
+   <script>
+    function readURL(input)
+    {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#prof_pic')
+                    .attr('src', e.target.result)
+                    .width(90)
+                    .height(90);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
+{% include 'common/admin_footer.html' %}         

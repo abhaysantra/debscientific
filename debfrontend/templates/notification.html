@@ -1,0 +1,61 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+ <section class="my-account-wrapper section-padding dashboard_section">
+        	<div class="container-fluid">
+             <div class="ch-cont">
+        		<div class="row clearfix">
+
+
+        			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">        			
+                {% include 'dashboard/dashboard_sidemenu.html' %}
+        		      		
+              </div>
+
+        			<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                        <div class="myaccount-widget">
+                             
+                            <h3 class="title">All Notification</h3>
+                            <div class="form-container">
+
+                               <div class="col-md-12">
+                                <div class="notifi_info warning">
+                                  <div class="notifi_icon">
+                                    <i class="fa fa-bell-o" aria-hidden="true"></i>
+                                  </div>
+                                  <div class="noti_mess">
+                                    <h4>Hi! Iam warning message.</h4>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+                                    <p>27 June 2019</p>
+                                  </div>
+                                </div>
+                               </div>
+                               <div class="col-md-12">
+                                <div class="notifi_info error">
+                                  <div class="notifi_icon">
+                                    <i class="fa fa-bell-o" aria-hidden="true"></i>
+                                  </div>
+                                  <div class="noti_mess">
+                                    <h4>Hi! Iam error message.</h4>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+                                    <p>27 June 2019</p>
+                                  </div>
+                                </div>
+                               </div>
+                  
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    </div>
+        		</div>
+        	</div>
+        </section>
+
+
+
+
+{% include 'common/footer.html' %}

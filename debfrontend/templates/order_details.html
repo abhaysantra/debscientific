@@ -1,0 +1,276 @@
+{% load custom_tags %}
+{% load static %}
+{% include 'common/header.html' %}
+
+
+
+<section class="my-account-wrapper section-padding">
+    <div class="container-fluid">
+        <div class="order-details-top">
+        	<div class="row">
+            <div class="col-md-4">
+                <div class="order-details-top-single">
+                    <h4>Order Details</h4>
+                    <ul>
+                        <li><b class="col-xs-4 no-padding">Order ID :</b><span class="col-xs-8 no-padding">{{ order_info.0.order_unique_id }}(1 item)</span></li><li>
+                            </li><li><b class="col-xs-4 no-padding">Order Date :</b><span class="col-xs-8 no-padding">{{ order_info.0.order_created_date }}</span></li><li>
+                                </li><li><b class="col-xs-4 no-padding">Total Amount</b>
+                                    <span class="col-xs-8 no-padding"> ₹ {{ order_info.0.order_total_price }} through
+                                    {% if order_info.0.payment_method == 'cod' %}
+                                    Cash on delivery
+                                    {% else %}
+                                    Online
+                                    {% endif %}
+                             </span></li><li>
+                                </li></ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4 blr-1">
+                            <div class="order-details-top-single">
+                                <h4>Address</h4>
+                                <ul>
+                                    <li><b>{{ order_address_info.0.full_name }}</b></li><li>
+                                        <div class="clearfix"></div>
+                                        </li><li>{{ order_address_info.0.address }}, {{ order_address_info.0.state }}, {{ order_address_info.0.country }}</li><li>
+                                            </li><li><b>Phone</b> {{ order_address_info.0.pincode }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                <div class="order-details-top-single">
+                                {% if order_info.0.order_status == 'Delivered' %}
+                                    {% if total_invoice == 0 %}
+                                   
+                                   {% else %}
+                                   <iframe src="{{ order_invoice_info.0.invoice.url }}" style="width:170px; height:200px;" frameborder="0"></iframe>
+                                   <a class="btn return-btn" href="{{ order_invoice_info.0.invoice.url }}" download="" title="Download Invoice" ><i class="fa fa-cloud-download" aria-hidden="true"></i></a>
+                                   {% endif %}
+                                {% endif %}
+                                   <!-- <div class="dropdown"><a class="infoice" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i> <span>Request Infoice</span> <i class="fa fa-exclamation-circle" aria-hidden="true"></i></a>
+
+                                          <ul class="dropdown-menu invoice-detail" role="menu">
+                                            <form>
+                                              <li class="mb-10">
+                                                Invoice will be sent to: ganesh.exprolab@gmail.com
+                                            </li>
+                                            <li class="text-center"><button type="button" value="Continue" class="city-change-btn btn-block">Request Infoice</button></li>
+                                        </form>
+                                    </ul>
+                                </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="order-details-top">
+
+                        {% for order_details_row in order_detail_info %}
+                    	<div class="row">
+                        <div class="col-md-4">
+                            <div class="order-details-top-single">
+
+                                <div class="order-detail-img">
+                                    <a href="{% url 'product_details' order_details_row.id order_details_row.product_slug %}">
+                                        {% for pro_img_row in product_image_list %}
+                                            {% if pro_img_row.product_id == order_details_row.order_product_id %}
+                                            <img src="{{ pro_img_row.product_list.url }}" class="img-responsive">
+                                            {% endif %}
+                                        {% endfor %}
+                                    </a>
+                                </div>
+                                <div class="order-details-cont">
+                                    <ul>
+                                        <li><a href="{% url 'product_details' order_details_row.id order_details_row.product_slug %}">{{ order_details_row.product_name }}</a></li>
+                                        <li>Qty - {{ order_details_row.order_product_qty }}</li>
+
+                                        <!-- <li>Seller - Deb Scientific</li> -->
+                    {% with addon_order_list=order_details_row.order_id|get_addon_order_list:order_details_row.order_product_id %}
+                        {% if addon_order_list %}
+                            {% for addon_order_list_row in addon_order_list %}
+                                <li>
+                                {{ addon_order_list_row.sub_product_name }}(Rs. {{ addon_order_list_row.addon_product_price }})
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            No Addon Product Add
+                        {% endif %}
+                    {% endwith %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                <div class="col-md-4">
+                    <div class="order-details-top-single  details-block-cus-ss">
+                        <ol class="cd-multi-steps text-bottom count">
+                            {% if order_details_row.order_product_status == 'Pending' %}
+                            <li class="visited"><a href="javascript:void(0)">Pending</a></li>
+                            <li class="visited active-cus"><a href="javascript:void(0)">Confirmed</a></li>
+                            <li class="visited active-cus"><a href="javascript:void(0)">Dispatched</a></li>
+                            <li class="visited deliver-cus active-cus"><a href="javascript:void(0)">Delivered</a></li>
+                            {% endif %}
+                            {% if order_details_row.order_product_status == 'Confirmed' %}
+                            <li class="visited"><a href="javascript:void(0)">Pending</a></li>
+                            <li class="visited"><a href="javascript:void(0)">Confirmed</a></li>
+                            <li class="visited active-cus"><a href="javascript:void(0)">Dispatched</a></li>
+                            <li class="visited deliver-cus active-cus"><a href="javascript:void(0)">Delivered</a></li>
+                            {% endif %}
+                            {% if order_details_row.order_product_status == 'Dispatched' %}
+                            <li class="visited"><a href="javascript:void(0)">Pending</a></li>
+                            <li class="visited"><a href="javascript:void(0)">Confirmed</a></li>
+                            <li class="visited"><a href="javascript:void(0)">Dispatched</a></li>
+                            <li class="visited deliver-cus active-cus"><a href="javascript:void(0)">Delivered</a></li>
+                            {% endif %}
+                            {% if order_details_row.order_product_status == 'Delivered' %}
+                            <li class="visited"><a href="javascript:void(0)">Pending</a></li>
+                            <li class="visited"><a href="javascript:void(0)">Confirmed</a></li>
+                            <li class="visited"><a href="javascript:void(0)">Dispatched</a></li>
+                            <li class="visited deliver-cus"><a href="javascript:void(0)">Delivered</a></li>
+                            {% endif %}
+                            {% if order_details_row.order_product_status == 'Cancelled' %}
+                            <span style="color: red">Cancelled</span><br>
+                            {% endif %}
+                            {% if order_details_row.order_product_status == 'Returned' %}
+                            <span style="color: blue">Returned</span><br>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+                        <div class="col-md-4">
+                            <div class="order-details-top-single">
+                                <h4 class="pull-left">₹ {{ order_details_row.order_product_price | multiply:order_details_row.order_product_qty }}</h4>
+                                
+                                
+                                    
+                                    
+                                    
+                                
+                            {% if order_details_row.order_product_status == 'Delivered' %}
+                                {% if order_details_row.return_status == 'Accepted' %}
+                                    <span class="btn return-btn-1">
+                                        Requested {{order_details_row.return_status}}
+                                    </span>
+                                
+                                {% elif  order_details_row.return_status == 'Rejected' %}
+                                    <span class="btn return-btn-1" style="background-color: red;">
+                                        Request {{order_details_row.return_status}}
+                                    </span>
+                                
+                                {% elif  order_details_row.return_status == 'Waiting' %}
+                                    <span class="btn return-btn-1">
+                                        Request {{order_details_row.return_status}}
+                                    </span>
+                                {% else %}
+                                    <button class="btn return-btn-1" type="button" onclick="return_your_order('{{ order_details_row.id }}')"><i class="fa fa-undo" aria-hidden="true"></i> Return Item</button>
+
+                                {% endif %}
+                            {% endif %}
+                                
+                                {% if order_details_row.order_product_status == 'Cancelled' %}
+                                <button class="btn return-btn-1" type="button" onclick="show_cancel_reason('{{ order_details_row.id }}')">Show Reason</button>
+                                {% endif %}
+                                         </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+<div class="modal fade" id="ShowCancelReasonModal_{{ order_details_row.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: bisque;">
+        <h5 class="modal-title" id="exampleModalLabel">Cancel Reason</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+       {{ order_details_row.cancel_reason }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" style="background-color: red;color: white;"  class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: bisque;">
+        <h5 class="modal-title" id="exampleModalLabel">Return Reason</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" id="return_form" action="">
+      <div class="modal-body">
+       <textarea class="form-control" name="return_reason" id="return_reason" rows="2"  style="line-height: 4.5;"></textarea>
+       <input type="hidden" name="order_det_id" id="order_det_id" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" onclick="return_form_submit()" class="btn btn-primary">Submit</button>
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function show_cancel_reason(order_det_id)
+  {
+    $('#ShowCancelReasonModal_'+order_det_id).modal('show');
+  }
+
+  function return_your_order(order_det_id)
+  {
+    if(confirm('Are you sure ?'))
+    {
+      $('#returnModal').modal('show');
+      $('#order_det_id').val(order_det_id);
+    }
+  }
+
+  function return_form_submit()
+  {
+    if($('#return_reason').val()=='')
+    {
+        alert('Please Enter Reason');
+        $('#cancel_reason').focus();
+    }
+    else
+    {
+        var return_reason = $('#return_reason').val();
+        var order_det_id = $('#order_det_id').val();
+        $.ajax({
+          url:"{% url 'return_reason_submit' %}",
+          data:{order_det_id:order_det_id,return_reason:return_reason,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+          dataType:'json',
+          type:'post',
+          success: function(data)
+          {
+            $('#returnModal').modal('hide');
+            if(data.result == 1)
+            {
+             Swal.fire({
+                position: 'middle',
+                type: 'success',
+                title: 'Submitted Successfully',
+                showConfirmButton: false,
+                timer: 2500
+              })
+            }
+            location.reload();
+          }
+        });
+    }
+  }
+</script>
+
+
+{% include 'common/footer.html' %}

@@ -1,0 +1,153 @@
+{% load debadmin_custom_tags %}
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+</head>
+
+<body lang=EN-US link="#0563C1" vlink=green style="font-family:'PTS75F', 'ptn57f', 'pt sans regular', 'pt sans narrow bold', 'streamline small cs', 'pt sans italic', 'pt sans bold italic', 'pt sans bold', 'flexslider icon', sans-serif; font-size:11pt">
+
+
+<table width="100%">
+	<tr>
+		<td colspan="6">
+			<br><img src="{{ logo | get64 }}"/>
+			<br>Deb Scientific
+			<br>{{ contact_info.0.contact_number }}
+	   	</td>       	
+	    <td colspan="6">{{ contact_info.0.address|safe }} </td>
+    </tr>
+</table>
+<div style="height:90px;width:10px;"></div>
+<div>
+
+	<table border="1" width="100%">
+		<tr>
+			<th colspan="18" style="text-align:center">Order Summary</th>
+		</tr>
+		<tr>
+			<td colspan="6">Invoice Number : {{ order_invoice_info.invoice_number }}<br>
+							 Date:20/10/12019
+			</td>
+			<td colspan="6">Order Number: {{ order_info.0.order_unique_id }}<br>
+							Date: 20/10/2019 
+			</td>
+			<td colspan="6"> 
+				<img src="{{ order_invoice_info.barcode.url | get64 }}"/>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="9"><b>Delivery Address</b><br>
+				Name: {{ deli_address_info.0.full_name }}
+			<br>
+			Email: {{ deli_address_info.0.email }}<br>
+			Mobile: {{ deli_address_info.0.mobile_number }}<br>
+			Address: {{ deli_address_info.0.address }}<br>
+			Pincode: {{ deli_address_info.0.pincode }}
+			</td>
+			<td colspan="9"><b>Billing Address</b><br>
+					Name: {{ bil_address_info.0.full_name }}<br>
+					Email: {{ bil_address_info.0.email }}<br>
+					Mobile: {{ bil_address_info.0.mobile_number }}<br>
+					Address: {{ bil_address_info.0.address }}<br>
+					Pincode: {{ bil_address_info.0.pincode }}<br>
+			</td>
+		</tr>
+		 <tr>
+			<td colspan="6" style="text-align: center;"><b>Payment Option</b></td>
+			<td colspan="6"  style="text-align: center;"> {% if order_info.0.payment_method == 'cod' %}
+                <b>Cash on Delivery</b>
+                {% else %}
+                <b>Online</b>
+                {% endif %}
+             </td>
+		</tr> 
+		
+		<tr>
+			<th>Sl. No.</th>
+			<th colspan="2">PRODUCT</th>
+			<th colspan="2">MRP(Rs)</th>
+		   	<th colspan="2">Discount(%)</th>
+		    <th colspan="2">Net Price(Rs.)</th>
+		   	<th colspan="1">QTY</th>
+			<th colspan="2">Product TOTAL</th>
+			<th colspan="4">Addon Details (Rs.)</th>
+			<th colspan="2">TOTAL(Rs.)</th>
+		</tr>
+
+		<!-- Loop Start -->
+		{% for order_details_row in order_details_info %}
+
+		<tr>
+			<td style="text-align: center;">1.</td>
+			<td colspan="2" width="25%" style="text-align: center;">{{ order_details_row.order_product_id|get_product_name }}</td>
+			<td colspan="2" style="text-align: center;">{{ order_details_row.order_product_mrp }}</td>
+            <td colspan="2" style="text-align: center;">{{ order_details_row.order_product_discount }}%</td> 
+            <td colspan="2" style="text-align: center;">{{ order_details_row.order_product_price }}</td>
+            <td colspan="1" style="text-align: center;">{{ order_details_row.order_product_qty }}</td>
+			<td colspan="2" style="text-align: center;">{{ order_details_row.order_product_qty|multiply:order_details_row.order_product_price }}</td>
+			<td colspan="4">
+				{% with addon_list=order_details_row.addon_product_id_list|get_details_of_addon_product_list %}
+                    {% if addon_list %}
+                    {% for addon_list_row in addon_list %}
+                        <li>{{ addon_list_row.sub_product_name }}(Rs. {{ addon_list_row.sub_product_price }})</li>
+                    {% endfor %}
+                    {% else %}
+                    No Addon Product Add
+                    {% endif %}
+                {% endwith %}
+			</td>
+			<td colspan="2" style="text-align: center;">{{ order_details_row|calculate_total_order_price_of_each_product_with_addon }}</td>
+		</tr>
+		{% endfor %}
+
+
+
+		<!-- Loop End -->
+
+		<!--<tr>
+			<td colspan="8">Sub-Total:</td>
+			<td style="text-align: center;" colspan="4">{{ order_details_info|calculate_sub_total }}</td>
+		</tr> -->
+
+		<tr>
+			<td colspan="9">Sub-Total:</td>
+			<td style="text-align: center;" colspan="9">{{ order_info.0.order_sub_total_price }}</td>
+		</tr>
+
+		<tr>
+			<td colspan="9">Flat Discount:</td>
+			<td style="text-align: center;" colspan="9">{{ order_info.0.order_discount }}</td>
+		</tr>
+		
+		<tr>
+			<td colspan="9">Shipping charge:</td>
+			<td style="text-align: center;" colspan="9">{{ order_info.0.order_shipping_charge }}</td>
+		</tr>
+
+		<tr>
+			<td colspan="9">Total:</td>
+			<td style="text-align: center;" colspan="9">{{ order_info.0.order_total_price }}</td>
+		</tr>
+		<tr>
+			<td colspan="4">Total in Words:</td>
+			<td colspan="14"><b>{{ order_info.0.order_total_price|convert_num2words }} Only</b>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="18">
+				<p>All buy is made for end user only. not for resale. any quaires regarding order please mail support@debscientific.com
+	          </p>
+			</td>
+	<table border="1">
+		<tr>
+			<td colspan="18">THIS IS A COMPUTER GENERATED INVOICE AND DOES NOT REQUIRE SIGNATURE</td>
+		</tr>
+	</table>
+		</tr>
+	</table>
+</div>
+<div style="height:70px;width:10px;"></div>
+</body>
+</html>

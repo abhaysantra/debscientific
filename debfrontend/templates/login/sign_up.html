@@ -1,0 +1,330 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+
+<div class="main-content-wrapper">
+                <div class="page-inner ptb--80">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6 col-md-10">
+                                <div class="form-box">
+                                    <h1>Sign Up</h1>
+                                    <p>Please Sign Up using account details bellow.</p>
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }}">
+                                            <a class="close" href="#" data-dismiss="alert">×</a>
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                    <form class="form" id="sign_up_form" method="POST" action="{% url 'register_submit' %}">{% csrf_token %}
+
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="text" name="full_name" id="full_name" class="sadia-input-form" placeholder="Enter Name">
+                                            </div>
+                                        </div>
+                                          
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="email" name="login_email" id="login_email" class="sadia-input-form" placeholder="Email">
+                                                <span id="check_email" style="color: red;"></span>
+                                            </div>
+                                        </div>
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="password" name="login_password" id="login_password" class="sadia-input-form" placeholder="Password">
+                                                <span id="error_pass" style="color: red;" ></span>
+                                            </div>
+                                        </div>
+                                         <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="password" name="confirm_password" id="confirm_password" class="sadia-input-form" placeholder="Confirm Password">
+                                                <span id="error_con_pass" style="color: red;" ></span>
+                                            </div>
+                                        </div>
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="text" name="phone_number" id="phone_number" class="sadia-input-form" placeholder="Phone Number">
+                                                <span id="check_phone" style="color: red;"></span>
+                                            </div>
+                                        </div>
+                                        
+                                    <button type="button" onclick="signup_form_validation()" class="btn btn--large btn-style-3">Sign Up</button>
+                                    </form>
+                                     <!--<div class="sign-block-up">
+                                            <a href="javascript:void(0)" onclick="signup_form_validation()" >Sign Up</a>
+                                    </div>-->
+                                    
+                                    <div class="sign-block-up">
+                                    <a class="create-account-link" href="{% url 'login' %}">Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>   
+            </div>   
+    </div>
+</div>
+
+<!--<div class="modal fade" id="otp_check_Modal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: bisque;">
+        <h5 class="modal-title" id="exampleModalLabel">Enter OTP</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" id="otp_form" action="">
+      <div class="modal-body">
+       <input type="text" class="form-control" name="otp_check" id="otp_check" value="">
+       <span id="check_pin" style="color: red;"></span>
+       <button type="button" id="pin_check_btn_resend" onclick="resend_otp()" class="btn btn-primary">Resend OTP</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="pin_check_btn" onclick="otp_check_form_submit()" class="btn btn-primary">Check</button>
+        <a id="go_continue_btn" style="display: none;"  onclick="sign_form_submit()" class="btn btn-primary">Go Next Step</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+     </form>
+    </div>
+  </div>
+</div> -->
+
+<div id="otp_check_Modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+     <!--   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+        <h4 class="modal-title">OTP Verification</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <span id="check_pin" style="color: red;"></span>
+           <span id="resend_msg_for_otp" style="color: green;"></span>
+          <input class="form-control" type="text" name="otp_check" required="" id="otp_check" placeholder="Put OTP"><br>
+           
+        </form>
+      </div>
+       <div class="modal-footer">
+       <button type="button" id="pin_check_btn" onclick="otp_check_form_submit()" class="btn btn-primary pull-right">Submit</button>
+
+       <button type="button" id = "pin_check_btn_resend" onclick="resend_otp()" class="btn btn-success pull-left">Resend  OTP</button>
+      </div>
+     
+    </div>
+
+  </div>
+</div>
+
+<script>
+function resend_otp()
+    {
+        var phone_number=$('#phone_number').val();
+          $.ajax({
+            url:"{% url 'resend_otp' %}",
+            data:{phone_number:phone_number, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType:'json',
+            type:'post',
+            success: function(data)
+            {
+                $('#otp_check').removeClass("red_border"); 
+                $('#check_pin').css('color','green').html(data.result);
+                // <span id="check_pin" style="color: red;"></span>
+              }
+          });
+    }
+
+function sign_form_submit()
+    {
+        $('#sign_up_form').submit();
+    }
+
+    function otp_check_form_submit()
+        {   
+
+        var otp = $('#otp_check').val();
+        var phone_number=$('#phone_number').val();
+          $.ajax({
+            url:"{% url 'check_otp_service' %}",
+            data:{otp:otp,phone_number:phone_number, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType:'json',
+            type:'post',
+            success: function(data)
+            {
+              if(data.result == 'no')
+              {
+                $('#otp_check').addClass("red_border"); 
+                $('#check_pin').html('OTP does not match');
+              }
+              if(data.result == 'yes')
+              {
+                // $('#check_pin').css('color','green').html('OTP Matched...');
+                // $('#pin_check_btn').css('display','none');
+                // $('#pin_check_btn').hide();
+                // $('#pin_check_btn_resend').hide();
+                // $('#go_continue_btn').css('display','block');
+                // $('#otp_check').removeClass('red_border');
+                $('#sign_up_form').submit();
+              }
+              
+            }
+          });
+              
+        }
+
+        function signup_validation()
+        {  
+            var full_name=$('#full_name').val();
+            var phone_number=$('#phone_number').val();
+            var login_email=$('#login_email').val();
+            var login_password = $('#login_password').val();
+            var confirm_password = $('#confirm_password').val();
+
+            var emailExpression = /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i;
+            var mobileExpression =  /^\d{10}$/;
+
+            if(full_name=="")
+            {
+                $('#full_name').addClass("red_border");  
+            }
+            else
+            {
+                $("#full_name").removeClass("red_border");
+            }
+
+            if(phone_number=="")
+            {
+                $('#phone_number').addClass("red_border");
+            }
+            else
+            {
+                if(!mobileExpression.test(phone_number))
+                {
+                    $('#phone_number').addClass('red_border');
+                    $('#check_phone').html('Check your mobile no');
+                }
+                else
+                {
+                    $('#phone_number').removeClass('red_border');
+                    $('#check_phone').html('');
+                }
+            }
+
+            if (login_email == "") 
+            {
+                $('#login_email').addClass('red_border');
+            }
+            else 
+            {
+                if(!emailExpression.test(login_email))
+                {
+                    $('#login_email').addClass('red_border');
+                    $('#check_email').html('Enter your proper email id');
+                }
+                else
+                {
+                    $('#login_email').removeClass('red_border');
+                    $('#check_email').html('');
+                }
+            } 
+
+            if (login_password == "") 
+            {
+                $('#login_password').addClass('red_border');
+            }
+            else 
+            {
+                if (login_password.length<6) 
+                {
+                    $('#login_password').addClass('red_border');
+                    $('#error_pass').html('Enter at least 6 digit');
+                }
+                else 
+                {
+                    $('#login_password').removeClass('red_border');
+                    $('#error_pass').html('');
+                }
+            }
+
+            if (confirm_password == "") 
+            {
+                $('#confirm_password').addClass('red_border');
+            }
+            else 
+            {
+                if (confirm_password==login_password) 
+                {
+                    $('#confirm_password').removeClass('red_border');
+                    $('#error_con_pass').html('');
+                }
+                else 
+                {
+                    $('#confirm_password').addClass('red_border');
+                    $('#error_con_pass').html('Confirm password does not match with new password');
+                }
+            }
+        }
+        function open_otp_modal()
+          {
+            // need to remove modal data 
+            // $('#otp_check_Modal').on('hidden', function() { $(this).removeData(); })
+            // $('#otp_form').reset();
+            $('#otp_check_Modal').modal('show');
+          }
+
+        function signup_form_validation()
+        {
+            
+            $('#sign_up_form').attr('onchange', 'signup_validation()');
+            $('#sign_up_form').attr('onkeyup', 'signup_validation()');
+            $('#sign_up_form').attr('onfocus', 'signup_validation()');
+
+            signup_validation();
+
+            var login_email=$('#login_email').val();
+            var phone_number=$('#phone_number').val();
+            // alert(login_email);
+            if ($('#sign_up_form .red_border').size() > 0)
+              {
+                $('#sign_up_form .red_border:first').focus();
+                return false;
+              }
+
+            else{
+
+                $.ajax({
+                  url:"{% url 'validate_email_id' %}",
+                  data:{login_email:login_email, phone_number:phone_number,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                    // $('#returnModal').modal('hide');
+                    if(data.result == 1)
+                    {
+                     open_otp_modal();
+
+                     // $('#sign_up_form').submit();
+                    }
+                    else
+                    {
+                        $('#check_email').html('This email id is already registered !!!');
+                        $('#login_email').addClass('red_border');
+                    }
+
+                    // location.reload();
+                  }
+                });
+
+        }
+    }
+</script>
+
+
+{% include 'common/footer.html' %}

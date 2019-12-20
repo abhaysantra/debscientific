@@ -1,0 +1,52 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+ <section class="my-account-wrapper section-padding dashboard_section">
+        	<div class="container-fluid">
+             <div class="ch-cont">
+        		<div class="row clearfix">
+
+
+        			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                            {% include 'dashboard/dashboard_sidemenu.html' %}        			
+                    </div>
+
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <div class="cart-table">
+                            <div class="account-cnt p-20 res480-p-10">
+                                    {% for message in messages %}
+                                    <div style="background-color:#238de9;;color: white;" class="alert alert-{{ message.tags }}">
+                                        <a class="close" href="#" data-dismiss="alert">×</a>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}  
+                                <div class="my-account-class-heading">
+                                    <p>Account information</p>
+                                </div>
+                                <div class="total-account-information-sectiom row">
+                                    <div class="col-md-9">
+                                        <p><span class="my-profile-span-text">Name</span><span class="colon-class">:</span>{{ user_detail.0.full_name }}</p>
+                                        <p><span class="my-profile-span-text">Phone Number</span><span class="colon-class">:</span>{{ user_detail.0.phone_number }}</p>
+                                        <p><span class="my-profile-span-text">Email Id</span><span class="colon-class">:</span>{{ user_detail.0.login_email }}</p>
+                                        <p><span class="my-profile-span-text">State</span><span class="colon-class">:</span>{{ user_detail.0.state | get_state_name }}</p>
+                                        <p><span class="my-profile-span-text">City</span><span class="colon-class">:</span>{{ user_detail.0.city | get_city_name }}</p>
+                                        <p><span class="my-profile-span-text">Pin Code</span><span class="colon-class">:</span>{{ user_detail.0.pin_code }}</p>
+                                        <p><span class="my-profile-span-text">Address</span><span class="colon-class">:</span>{{ user_detail.0.address }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{% url 'edit_profile' %}"><div class="edit-profile-button"><span class="span-edit-profile">Edit Info</span></div></a>
+                                    </div>
+                                </div>
+                            </div>
+
+    </div>
+    </div>
+
+                    </div>
+        		</div>
+        	</div>
+        </section>
+
+
+
+{% include 'common/footer.html' %}

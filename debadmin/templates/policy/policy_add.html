@@ -1,0 +1,124 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+<script src='//cdn.tinymce.com/4/tinymce.min.js'></script>
+  <!--<script>tinymce.init({ selector:'textarea' });</script>-->
+  <script type="text/javascript">
+    tinymce.init({
+      selector: ".tinyarea",
+      theme: "modern",
+      menubar: "edit insert tools",
+      plugins: [
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "searchreplace wordcount visualblocks visualchars code fullscreen",
+        "insertdatetime media nonbreaking save table contextmenu directionality",
+        "emoticons template paste textcolor colorpicker textpattern imagetools"
+      ],
+      toolbar1: "undo redo | styleselect | bold italic| forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link preview",
+      image_advtab: true
+    });
+  </script>
+ 
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h3>
+       Policy
+      </h3>
+      
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <!-- left column -->
+        
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-12">
+          <!-- Horizontal Form -->
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Policy
+                <span style="padding-right:30px;"></span>
+              </h3>
+                <div id="validation" style="color:red;"></div>
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <a class="close" href="#" data-dismiss="alert">×</a>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{% url 'policy_data_insertion' %}" method="post" id="home_content_form" enctype="multipart/form-data">{% csrf_token %}
+              <div class="box-body">
+
+                <div class="form-group">
+                  <label for="company_name" class="col-sm-2 control-label"><center>Privacy Policy : <span style="color:#F00">*</span> </center></label>
+
+                  <div class="col-sm-10">
+                    <!-- <input type="text" name="about_title" id="about_title" class="form-control"  placeholder="Title" value="{{ policy.0.title }}">  -->
+                    <textarea  name="privacy_policy" id="privacy_policy" class="tinyarea"   rows="5" cols="96">{{ policy.0.privacy_policy }}</textarea> 
+                    <span id="error_compname" style="color:red"></span>
+                  </div>
+                 
+                </div> 
+
+              <div class="form-group">
+                  <label for="company_name" class="col-sm-2 control-label"><center>Return Policy : <span style="color:#F00">*</span> </center></label>
+
+                  <div class="col-sm-10">
+                    <textarea name="return_policy" class="tinyarea"   rows="5" cols="96" id="return_policy">{{ policy.0.return_policy }}</textarea>
+                     <span id="error_compname" style="color:red"></span>
+                  </div>
+                 
+                </div> 
+
+                <div class="form-group">
+                  <label for="company_name" class="col-sm-2 control-label"><center>Terms Of Use : <span style="color:#F00">*</span> </center></label>
+
+                  <div class="col-sm-10">
+                    <textarea name="terms_of_use" class="tinyarea"   rows="5" cols="96" id="terms_of_use">{{ policy.0.terms_of_use }}</textarea>
+                     <span id="error_compname" style="color:red"></span>
+                  </div>
+                 
+                </div>
+
+               
+				<span style="color:#F00">*Fields Are Required</span>
+
+              <input type="hidden" name="hidden_id" value="{{ policy.0.id }}">
+              
+              <div id="error"></div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <a href="{% url 'debadmin_index' %}" class="btn btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-info pull-right" >Submit</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+          <!-- general form elements disabled -->
+          
+          <!-- /.box -->
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  </div>
+ 
+
+
+{% include 'common/admin_footer.html' %}
+
+         
+
+            

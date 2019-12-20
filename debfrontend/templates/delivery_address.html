@@ -1,0 +1,880 @@
+{% load custom_tags %}
+{% load static %}
+{% include 'common/header.html' %}
+
+
+<div class="check_shedul">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="shedul_info">
+          <ul>
+            <li class="active"><p>Order Summery</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Delivery Address</p></li>
+            <li class=""></li>
+            <li class=""><p>Place Order</p></li>
+            <li></li>
+            <li><p>Payment</p></li>
+            <li></li>
+            <li><p>Completion</p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="order-summery">
+<div class="container-fluid">
+<div class="row">
+
+
+<div class="col-md-9">
+  <form id="billing_add_form" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="order-detail-content billing-block-add">
+       
+
+              <div class="col-md-12">
+              <h3 class="checkout-title"> Billing Address</h3>
+            </div>
+            <div>
+              
+                <div class="col-md-12 no-padding row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Full Name<span>*</span></label>
+                      <input type="text" name="bill_name" id="bill_name" placeholder="Full Name" class="form-control" value="{{ billing_address.full_name }}">  
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Phone / Mobile Number<span>*</span></label>
+                      <input type="text" readonly="" name="bill_ph" id="bill_ph" placeholder="Phone / Mobile Number" class="form-control" value="{{ billing_address.phone_number }}">  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 no-padding row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Email<span>*</span></label>
+                      <input type="text" readonly="" name="bill_email" id="bill_email" placeholder="Email" class="form-control" value="{{ billing_address.login_email }}">  
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Country<span>*</span></label>
+                      <!--<input type="text" name="bill_country" id="bill_country" placeholder="Country" class="form-control" value="{{ billing_address.country }}"> -->
+
+                      <select name="bill_country" id="bill_country" class="form-control" onclick="get_state_based_on_country(this.value)" >
+                        <option value="0">Select Country</option>                     
+                        {% for country_row in all_countries %}
+                            <option value="{{ country_row.country_id }}" {% if country_row.country_id == billing_address.country %}selected{% endif %} >{{ country_row.name }}</option>
+                        {% endfor %}
+                                                  
+                      </select>
+ 
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 no-padding row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>State<span>*</span></label>
+                      <!--<input type="text" name="bill_state" id="bill_state" placeholder="State" class="form-control" value="{{ billing_address.state }}">--> 
+                      <select name="bill_state" id="bill_state" class="form-control" onchange="get_city_based_on_state(this.value)" >
+                        <option value="0">Select</option>
+                          {% for state_row in all_states %}
+                            <option value="{{ state_row.state_id }}" {% if state_row.state_id == billing_address.state %}selected{% endif %} >{{ state_row.name }}</option>
+                          {% endfor %}
+                                                  
+                      </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>City<span>*</span></label>
+                    <!--<input type="text" name="bill_city" id="bill_city" placeholder="City" class="form-control" value="{{ billing_address.city }}"> -->
+
+                    <select name="bill_city" id="bill_city" class="form-control"  >
+                      <option value="0">Select</option>
+                        {% for city_row in all_cities %}
+                      <option value="{{ city_row.city_id }}" {% if city_row.city_id == billing_address.city %}selected{% endif %} >{{ city_row.name }}</option>
+                    {% endfor %}
+                          
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 no-padding row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Pincode<span>*</span></label>
+                      <input type="text" name="bill_pincode" id="bill_pincode" placeholder="Pincode" class="form-control" value="{{ billing_address.pin_code }}"> 
+                      <span id="check_bill_pin" style="color: red;" ></span> 
+                    </div>
+                  </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Landmark / Locality(Optional)<span></span></label>
+                    <input type="text" name="bill_landmark" id="bill_landmark" placeholder="Landmark / Locality" value="{{ billing_address.landmark }}" class="form-control">  
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                    <div class="form-group">
+                      <label>GST No.(Optional)<span></span></label>
+                      <input type="text" name="bill_gst_no" id="bill_gst_no" placeholder="GST No." value="{{ billing_address.gst_no }}" class="form-control">
+                    </div>
+              </div>
+              
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>Address<span>*</span></label>
+                  <textarea class="form-control" rows="2" name="bill_address" id="bill_address" placeholder="Address">{{ billing_address.address }}</textarea>
+                </div>
+              </div>
+
+           
+          </div>
+
+
+
+
+          <div class="col-md-12 text-right pt-10 pb-10">
+              <h3 class="checkout-title pull-left">  Delivery Address</h3>
+              <span class="delivery-check">
+                <label>
+              <input type="checkbox" name="add_check" onclick="set_same_billing_address()"> <span class="label-text">Same as Billing Details</span>
+          </label>
+              </span>
+            </div>
+            <div>
+             
+                <div class="col-md-12 no-padding row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Full Name<span>*</span></label>
+                      <input type="text" name="deli_name" id="deli_name" placeholder="Full Name" class="form-control" value="{{ delivery_address.full_name }}">  
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Phone / Mobile Number<span>*</span></label>
+                      <input type="text" name="deli_ph" id="deli_ph" placeholder="Phone / Mobile Number" class="form-control" value="{{ delivery_address.mobile_number }}">
+                      <span id="check_deli_phone" style="color: red;" ></span>  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 no-padding row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Email<span>*</span></label>
+                      <input type="text" name="deli_email" id="deli_email" placeholder="Email" class="form-control" value="{{ delivery_address.email }}"> 
+                      <span id="check_deli_email" style="color: red;" ></span> 
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Country<span>*</span></label>
+                        <!--<input type="text" name="deli_country" id="deli_country" placeholder="Country" class="form-control" value="{{ delivery_address.country }}"> -->
+
+                        <select name="deli_country" id="deli_country" class="form-control" onclick="get_state_based_on_country_of_deli_address(this.value)" >
+                        <option value="0"> Select Country</option>                     
+                        {% for country_row in all_countries %}
+                            <option value="{{ country_row.country_id }}" {% if country_row.country_id == delivery_address.country %}selected{% endif %} >{{ country_row.name }}</option>
+                        {% endfor %}
+                                                  
+                      </select>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 no-padding row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>State<span>*</span></label>
+                    <!--<input type="text" name="deli_state" id="deli_state" placeholder="State" class="form-control" value="{{ delivery_address.state }}"> -->
+
+                    <select name="deli_state" id="deli_state" class="form-control" onchange="get_city_based_on_state_of_deli_address(this.value)" >
+                        <option value="0">Select State</option>
+                          {% for state_row in all_states_of_delivery_address %}
+                            <option value="{{ state_row.state_id }}" {% if state_row.state_id == delivery_address.state %}selected{% endif %} >{{ state_row.name }}</option>
+                          {% endfor %}
+                                                  
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>City<span>*</span></label>
+                    <!--<input type="text" name="deli_city" id="deli_city" placeholder="City" class="form-control" value="{{ delivery_address.city }}"> -->
+                    <select name="deli_city" id="deli_city" class="form-control"  >
+                      <option value="0">Select City</option>
+                        {% for city_row in all_cities_of_delivery_address %}
+                      <option value="{{ city_row.city_id }}" {% if city_row.city_id == delivery_address.city %}selected{% endif %} >{{ city_row.name }}</option>
+                    {% endfor %}
+                          
+                    </select> 
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 no-padding row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Pincode<span>*</span></label>
+                    <input type="text" name="deli_pincode" id="deli_pincode" placeholder="Pincode" class="form-control" value="{{ delivery_address.pincode }}">
+                    <span id="check_deli_pin" style="color: red;" ></span>  
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Landmark / Locality<span>*</span></label>
+                    <input type="text" name="deli_landmark" id="deli_landmark" placeholder="Landmark / Locality" class="form-control" value="{{ delivery_address.landmark }}">  
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                    <div class="form-group">
+                      <label>GST No.(Optional)<span></span></label>
+                      <input type="text" name="deli_gst_no" id="deli_gst_no" placeholder="GST No." value="{{ delivery_address.gst_no }}" class="form-control">
+                    </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>Address<span>*</span></label>
+                  <textarea class="form-control" rows="2" name="deli_address" id="deli_address" placeholder="Address">{{ delivery_address.address }}</textarea>
+                </div>
+              </div>
+              
+            
+          </div>
+
+
+ 
+
+
+        <div class="cart_navigation"> 
+          <a class="checkout-btn proceed-back back-to" href="{% url 'order_summary' %}"><i class="fa fa-arrow-left"> </i>&nbsp; Back</a> 
+          <a class="checkout-btn proceed-back" href="javascript:void(0)" onclick="billing_form_submit()" ><i class="fa fa-check"></i> Continue</a> 
+        </div>
+
+        
+      </div>
+ </form>
+
+</div>
+
+
+<div class="col-md-3">
+<div class="order-pro">
+<div class="billing-block total-count">
+<h3>Total Billing Amount</h3> 
+</div>
+
+<div class="total-amount">
+<p>Sub Total<span><i class="fa fa-inr" aria-hidden="true"></i> {{total_cart_price}}</span></p> 
+<p>Shipping Charge<span><i class="fa fa-inr" aria-hidden="true"></i> {{ total_shipping_charge }}</span></p>    
+</div>
+
+<div class="total-amount-block">
+<p>Total<span><i class="fa fa-inr" aria-hidden="true"></i> {{ total_cart_price|add:total_shipping_charge }}</span></p>    
+</div>  
+
+<div class="payble abail-abail-block">
+<p>Total Payable<span><i class="fa fa-inr" aria-hidden="true"></i> {{ total_cart_price|add:total_shipping_charge }}</span></p>
+<p class="purchase">You are saving <i class="fa fa-inr" aria-hidden="true"></i> {{total_cart_save_price}} on this purchase</p>  
+</div>
+
+
+<a href="javascript:void(0)" onclick="billing_form_submit()" class="place-btn">Continue</a>
+<div class="safe-block">
+  
+  <img src="{% static 'assets/img/safe.png' %}" alt="">
+  <p>Safe &amp; Secure Payment</p>
+  <img src="{% static 'assets/img/aw1.png' %}" alt="">
+  <p>Quality Seal</p>
+  <img src="{% static 'assets/img/lowes.png' %}" alt="">
+  <p>Lowest Price Guaranteed</p>
+  <img src="{% static 'assets/img/can.png' %}" alt="">
+  <p>Easy Cancelation</p>
+  <img src="{% static 'assets/img/auth.png' %}" alt="">
+  <p>100% Authentic Product</p>
+</div>
+  </div>
+</div>
+
+
+
+
+  
+</div>  
+  
+</div>  
+
+
+  
+</div>
+
+
+
+
+<div class="modal fade" id="error_pincode_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: bisque;">
+        <h5 class="modal-title" id="exampleModalLabel">Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" id="pincode_form" action="">
+      <div class="modal-body">
+        <marquee width="100%">
+          <p style="color: red;font-size: large;" >
+            Service not available in your delivery address pincode
+          </p>
+        </marquee>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+  function set_same_billing_address()
+  {
+    var check = $("input[name='add_check']:checked");
+
+    var name=$('#bill_name').val();
+    var phone=$('#bill_ph').val();
+    var email=$('#bill_email').val();
+    var country=$('#bill_country').val();
+    var state=$('#bill_state').val();
+    var city=$('#bill_city').val();
+    var pincode=$('#bill_pincode').val();
+    var landmark=$('#bill_landmark').val();
+    var gst_no=$('#bill_gst_no').val();
+    var address=$('#bill_address').val();
+    // alert(country+'---'+state+'---'+city);
+    // alert('check :'+check);
+
+    if(country=='None' || country =='0')
+      {
+          $('#bill_country').addClass("red_border"); 
+      }
+    else
+    {
+        $('#bill_country').removeClass("red_border");
+    }
+    if($('#bill_state').val()=="" || $('#bill_state').val()=="0")
+    {
+        $('#bill_state').addClass("red_border"); 
+    }
+    else
+    {
+        $('#bill_state').removeClass("red_border");
+    }
+
+    if($('#bill_city').val()=="" || $('#bill_city').val()=="0")
+    {
+        $('#bill_city').addClass("red_border"); 
+    }
+    else
+    {
+        $('#bill_city').removeClass("red_border");
+    }
+
+
+    if(check.length=='')
+    {
+      location.reload();
+      $.ajax({
+        headers: { "X-CSRFToken": getCookie("csrftoken") },
+        url:"{% url 'get_default_delivery_add' %}",
+        dataType:'json',
+        type:'post',
+        success: function(data)
+        {
+          if(data)
+          {
+            $('#deli_name').val(data.deli_name);
+            $('#deli_ph').val(data.deli_ph);
+            $('#deli_email').val(data.deli_email);
+            $('#deli_country').val(data.deli_country);
+            $('#deli_state').val(data.deli_state);
+            $('#deli_city').val(data.deli_city);
+            $('#deli_pincode').val(data.deli_pincode);
+            $('#deli_landmark').val(data.deli_landmark);
+            $('#deli_gst_no').val(data.deli_gst_no);
+            $('#deli_address').val(data.deli_address);
+          }
+          else
+          {
+            $('#deli_name').val('');
+            $('#deli_ph').val('');
+            $('#deli_email').val('');
+            $('#deli_country').val('');
+            $('#deli_state').val('');
+            $('#deli_city').val('');
+            $('#deli_pincode').val('');
+            $('#deli_landmark').val('');
+            $('#deli_gst_no').val('');
+            $('#deli_address').val('');
+          } 
+        }
+      });
+    }
+    else
+    {
+      // alert('in else :'+state);
+      $('#deli_name').val(name);
+      $('#deli_ph').val(phone);
+      $('#deli_email').val(email);
+      $('#deli_country').val(country);
+      // $('#deli_state').val(state);
+      // $('#deli_city').val(city);
+      // calling ajax to get state value as well as city
+      $.ajax({
+                  url:"{% url 'get_country_state_city_name' %}",
+                  data:{country_id:country, state_id:state, city_id:city,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                  var state_string='<option value="'+ state + '"> '+data['state']+' </option>';
+                  var city_string='<option value="'+ city + '"> '+data['city']+' </option>';
+
+                  $('#deli_state').html(state_string);
+                  $('#deli_city').html(city_string);
+           
+                }
+                    
+                });
+
+      // $('#deli_city').val(city);
+      $('#deli_pincode').val(pincode);
+      $('#deli_landmark').val(landmark);
+      $('#deli_gst_no').val(gst_no);
+      $('#deli_address').val(address);
+    }
+  }
+
+
+
+        function bill_addrs_valid()
+        {  
+            var emailExpression = /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i;
+            var mobileExpression =  /^\d{10}$/;
+            var pincodeExpression =  /^\d{6}$/;
+
+            // Billing Address Validation
+
+            if($('#bill_name').val()=="")
+            {
+                $('#bill_name').addClass("red_border");  
+            }
+            else
+            {
+                $('#bill_name').removeClass("red_border");
+            }
+
+            var country =$('#bill_country').val();
+            // alert(country);
+            // alert(country.length);
+
+            if(country=='None' || country =='0')
+            {
+                $('#bill_country').addClass("red_border"); 
+                // $('#bill_country').val(''); 
+            }
+            else
+            {
+                $('#bill_country').removeClass("red_border");
+                // $('#bill_country').val(''); 
+            }
+
+            if($('#bill_state').val()=="" || $('#bill_state').val()=="0")
+            {
+                $('#bill_state').addClass("red_border"); 
+                // $('#bill_state').val(''); 
+            }
+            else
+            {
+                $('#bill_state').removeClass("red_border");
+            }
+
+            if($('#bill_city').val()=="" || $('#bill_city').val()=="0")
+            {
+                $('#bill_city').addClass("red_border"); 
+                // $('#bill_city').val(''); 
+            }
+            else
+            {
+                $('#bill_city').removeClass("red_border");
+            }
+
+            var bill_pincode = $('#bill_pincode').val();
+            if(bill_pincode=="")
+            {
+                $('#bill_pincode').addClass("red_border"); 
+                // $('#bill_pincode').val(''); 
+            }
+            else
+            {
+              if(!pincodeExpression.test(bill_pincode))
+              {
+                $('#bill_pincode').addClass("red_border"); 
+                $('#check_bill_pin').html('Enter your proper pincode'); 
+                // $('#bill_pincode').val('');
+              }
+              else
+              {
+                $('#bill_pincode').removeClass("red_border");
+                $('#check_bill_pin').html('');
+              }
+            }
+
+            if($('#bill_address').val()=="" || $('#bill_address').val()=="None")
+            {
+                $('#bill_address').addClass("red_border");
+                // $('#bill_address').val('');  
+            }
+            else
+            {
+                $('#bill_address').removeClass("red_border");
+            }
+
+
+            // Delivery Address Validation
+
+
+            if($('#deli_name').val()=="")
+            {
+                $('#deli_name').addClass("red_border");  
+            }
+            else
+            {
+                $('#deli_name').removeClass("red_border");
+            }
+
+            var deli_ph = $('#deli_ph').val();
+            if(deli_ph=="")
+            {
+                $('#deli_ph').addClass("red_border");
+            }
+            else
+            {
+                if(!mobileExpression.test(deli_ph))
+                {
+                    $('#deli_ph').addClass('red_border');
+                    $('#check_deli_phone').html('Check your mobile no');
+                }
+                else
+                {
+                    $('#deli_ph').removeClass('red_border');
+                    $('#check_deli_phone').html('');
+                }
+            }
+
+            var deli_email = $('#deli_email').val();
+            if (deli_email == "") 
+            {
+                $('#deli_email').addClass('red_border');
+            }
+            else 
+            {
+                if(!emailExpression.test(deli_email))
+                {
+                    $('#deli_email').addClass('red_border');
+                    $('#check_deli_email').html('Enter your proper email id');
+                }
+                else
+                {
+                    $('#deli_email').removeClass('red_border');
+                    $('#check_deli_email').html('');
+                }
+            } 
+
+            if($('#deli_country').val()=="" || $('#deli_country').val()=="0")
+            {
+                $('#deli_country').addClass("red_border");  
+            }
+            else
+            {
+                $("#deli_country").removeClass("red_border");
+            }
+
+            // alert($('#deli_state').val());
+            if($('#deli_state').val()=="" || $('#deli_state').val()=="0")
+            {
+                $('#deli_state').addClass("red_border");  
+            }
+            else
+            {
+                $("#deli_state").removeClass("red_border");
+            }
+
+            // alert($('#deli_city').val());
+            if($('#deli_city').val()=="" || $('#deli_city').val()=="0")
+            {
+                $('#deli_city').addClass("red_border");  
+            }
+            else
+            {
+                $("#deli_city").removeClass("red_border");
+            }
+
+            var deli_pincode = $('#deli_pincode').val();
+            if(deli_pincode=="")
+            {
+                $('#deli_pincode').addClass("red_border");  
+            }
+            else
+            {
+              if(!pincodeExpression.test(deli_pincode))
+              {
+                $('#deli_pincode').addClass("red_border");
+                $('#check_deli_pin').html('Enter your proper pincode');  
+              }
+              else
+              {
+                $("#deli_pincode").removeClass("red_border");
+                $('#check_deli_pin').html('');
+              }
+            }
+
+            if($('#deli_address').val()=="" || $('#deli_address').val()=="None")
+            {
+                $('#deli_address').addClass("red_border");  
+                // $('#deli_address').val('');
+            }
+            else
+            {
+                $("#deli_address").removeClass("red_border");
+            }
+
+
+
+        }
+
+        
+
+function get_state_based_on_country(country_id)
+{
+    if(country_id=="")
+     {
+        alert('Please Select Country');
+     }
+    if(country_id != '')
+    {
+        $.ajax({
+                  url:"{% url 'get_state_list' %}",
+                  data:{country_id:country_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                    var keys = Object.keys(data); 
+                  var values = Object.values(data); 
+                  var total_row = keys.length;
+
+                  var html_string='<option value="0"> Select </option>';
+
+                  for (var i = 0; i < keys.length; i++) {
+                    html_string+='<option value="'+keys[i]+'">'+values[i]+'</option>'; 
+                  }
+
+                  $('#bill_state').html(html_string);
+           
+                }
+                    
+                });
+    }
+}
+
+function get_city_based_on_state(state_id)
+{
+    if(state_id=="")
+     {
+        alert('Please Select State');
+     }
+    if(state_id != '')
+    {
+        $.ajax({
+                  url:"{% url 'get_city_list' %}",
+                  data:{state_id:state_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                    var keys = Object.keys(data); 
+                  var values = Object.values(data); 
+                  var total_row = keys.length;
+
+                  var html_string='<option value="0"> Select </option>';
+
+                  for (var i = 0; i < keys.length; i++) {
+                    html_string+='<option value="'+keys[i]+'">'+values[i]+'</option>'; 
+                  }
+
+                  $('#bill_city').html(html_string);
+           
+                }
+                    
+                });
+    }
+}
+
+function get_state_based_on_country_of_deli_address(country_id)
+{
+    if(country_id=="")
+     {
+        alert('Please Select Country');
+     }
+    if(country_id != '')
+    {
+        $.ajax({
+                  url:"{% url 'get_state_list' %}",
+                  data:{country_id:country_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                    var keys = Object.keys(data); 
+                  var values = Object.values(data); 
+                  var total_row = keys.length;
+
+                  var html_string='<option value="0"> Select </option>';
+
+                  for (var i = 0; i < keys.length; i++) {
+                    html_string+='<option value="'+keys[i]+'">'+values[i]+'</option>'; 
+                  }
+
+                  $('#deli_state').html(html_string);
+           
+                }
+                    
+                });
+    }
+}
+
+function get_city_based_on_state_of_deli_address(state_id)
+{
+    if(state_id=="")
+     {
+        alert('Please Select Country');
+     }
+    if(state_id != '')
+    {
+        $.ajax({
+                  url:"{% url 'get_city_list' %}",
+                  data:{state_id:state_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                    var keys = Object.keys(data); 
+                  var values = Object.values(data); 
+                  var total_row = keys.length;
+
+                  var html_string='<option value="0"> Select </option>';
+
+                  for (var i = 0; i < keys.length; i++) {
+                    html_string+='<option value="'+keys[i]+'">'+values[i]+'</option>'; 
+                  }
+
+                  $('#deli_city').html(html_string);
+           
+                }
+                    
+                });
+    }
+}
+
+
+function billing_form_submit()
+        {
+            $('#billing_add_form').attr('onchange', 'bill_addrs_valid()');
+            $('#billing_add_form').attr('onkeyup', 'bill_addrs_valid()');
+            $('#billing_add_form').attr('onfocus', 'bill_addrs_valid()');
+
+            bill_addrs_valid();
+
+              if ($('#billing_add_form .red_border').size() > 0)
+              {
+                $('#billing_add_form .red_border:first').focus();
+                return false;
+              }
+              else 
+              {
+                  var deli_pincode = $('#deli_pincode').val();
+                  $.ajax({
+                    url:"{% url 'check_pincode_service' %}",
+                    data:{pincode:deli_pincode, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    dataType:'json',
+                    type:'post',
+                    success: function(data)
+                    {
+                      if(data.result == 'no')
+                      {
+                        $('#error_pincode_Modal').modal('show');
+                      }
+                      if(data.result == 'yes')
+                      {
+                        
+                        var form_data = new FormData($('#billing_add_form')[0]);
+                        $.ajax({
+                          headers: { "X-CSRFToken": getCookie("csrftoken") },
+                          url:"{% url 'submit_billing_address' %}",
+                          data:form_data,
+                          dataType:'json',
+                          type:'post',
+                          contentType: false,
+                          processData:false,
+                          success: function(data)
+                          {
+                            window.location.href="{% url 'place_order' %}";
+                          }
+                        });
+                      }
+                      
+                    }
+                  });
+              }
+        }
+
+
+function getCookie(c_name)
+{
+    if (document.cookie.length > 0)
+    {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1)
+        {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+        }
+    }
+    return "";
+}
+</script>
+
+
+{% include 'common/footer.html' %}

@@ -1,0 +1,36 @@
+{% load static %}
+{% include 'common/header.html' %}
+<div class="our-value-able-customer-section">
+	<div class="vlueable-img">
+		<div class="valuea-able-overlay"></div>
+		<img src="{% static 'assets/img/valuea.jpg' %}">
+		<div class="valuea-able-text">
+			<h4>Our Valueable Customer</h4>
+		</div>
+	</div>
+</div>
+
+
+<div class="customer-sec-p-all">
+	<div class="container">
+		<div class="row">
+			{% for valuable_cus_row in valuable_cus_det %}
+			<div class="col-md-3">
+				<div class="value-per-cus-img-content">
+					<div class="value-per-cus-img">
+						<img src="{{ valuable_cus_row.customer_image.url }}">
+					</div>
+					<div class="value-per-cus-content">
+						<h4>{{ valuable_cus_row.customer_name }}</h4>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			
+		</div>
+	</div>
+</div>
+
+
+
+{% include 'common/footer.html' %}

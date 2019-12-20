@@ -1,0 +1,494 @@
+{% load custom_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Deb Scientific</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="{% static 'image/x-icon' %}" href="#">
+    
+    <!-- CSS 
+    ========================= -->
+    
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.css' %}">
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <!-- Main responsive CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+    <!-- Main Wrapper Start -->
+    <!--header area start-->
+    <header class="header_area">
+        <!--header top start-->
+        <div class="header_top">
+            <div class="container">  
+                <div class="top_inner">
+                    <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 col-sm-9">
+                        <div class="follow_us">
+                            <!-- <label>Follow Us:</label> -->
+                            <ul class="follow_link deb-scientific-p">
+                                <li><a href="mailto:{{contact_us_det.0.mail}}"><i class="fa fa-envelope" aria-hidden="true"></i><span>{{ contact_us_det.0.mail }}</span></a></li>
+                                <li><a href="tel:{{contact_us_det.0.contact_number}}"><i class="fa fa-phone" aria-hidden="true"></i>
+                            <span>{{ contact_us_det.0.contact_number }}</span></a></li>
+                             
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-3">
+                        <div class="top_right text-right">
+                            <ul>
+                                {% if request.session.user_session_id %}
+                                <li class="top_links"><a href="#"><i class="ion-android-person"></i> My Account<i class="ion-ios-arrow-down"></i></a>
+                                    <ul class="dropdown_links">
+                                        <li><a href="{% url 'dashboard' %}">Dashboard </a></li>
+                                        <li><a href="{% url 'my_address_list' %}">Manage Address </a></li>
+                                        <li><a href="{% url 'my_order' %}">My Order </a></li>
+                                        <li><a href="{% url 'my_wishlist' %}">My Wishlist </a></li>
+                                        <li><a href="{% url 'user_logout' %}">Logout </a></li>
+                                    </ul>
+                                </li> 
+                                {% else %}
+                                <li class="top_links"><a href="{% url 'login' %}"><i class="ion-android-person"></i> Login / Register</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>   
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <!--header top start-->
+        <!--header middel start-->
+        <div class="header_middle">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="logo">
+                            <a href="{% url 'index' %}"><img src="{% static 'assets/img/logodemo.png' %}" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-6 col-sm-6">
+                        <div class="middel_right">
+                            <div class="search-container">
+                               <form id="search_pro_form" action="{% url 'product_search' %}" method="post">{% csrf_token %}
+                                    <div class="search_box">
+                                        <!-- <input type="text" name="search_name" onkeypress="get_auto_product_name('search_pro_name')" id="search_pro_name" placeholder="Search product here ..." value="{% if search_text %}{{search_text}}{% endif %}" > -->
+                                        <input type="text" name="search_name" id="search_pro_name" placeholder="Search product here ..." value="{% if search_text %}{{search_text}}{% endif %}" >
+                                        <button type="button" onclick="search_product()"><i class="ion-ios-search-strong"></i></button> 
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="middel_right_info">
+                            
+                                {% if 'user_session_id' in request.session %}
+                                <div class="header_wishlist">
+                                    <a href="{% url 'wishlist' %}"><span class="lnr lnr-heart"></span> <span class="wish-cart">Wish list</span> </a>
+                                    <span class="wishlist_quantity">{{total_wish_item}}</span>
+                                </div>
+                                
+
+        {% if request.path != '/view-cart/' and request.path != '/order-summary/' and request.path != '/delivery-address/' and request.path != '/place-order/' and request.path != '/payment/' and request.path != '/completation/' %}
+                                <div class="mini_cart_wrapper">
+                                    <a href="javascript:void(0)"><span class="lnr lnr-cart"></span><span class="wish-cart">My Cart</span></a>
+                                    <span class="cart_quantity">{{ total_cart_item }}</span>
+                                {% if total_cart_item != 0 %}
+                                    
+                                    <!--mini cart-->
+                                      <div class="mini_cart">
+                                        <div class="cart-block-cus">
+                                        
+                                        {% for cart_row in cart_list %}
+
+                                        <div class="cart_item">
+                                           <div class="cart_img">
+                                                <a href="{% url 'product_details' cart_row.cart_item_id cart_row.product_slug %}">
+                                                {% for cart_pro_img in product_image_list %}
+                                                {% if cart_pro_img.product_id == cart_row.cart_item_id %}
+                                                <img src="{{ cart_pro_img.product_list.url }}" alt="">
+                                                {% endif %}
+                                                {% endfor %}
+                                                </a>
+                                           </div>
+                                            <div class="cart_info">
+                                                <a href="{% url 'product_details' cart_row.cart_item_id cart_row.product_slug %}">{{ cart_row.product_name }}</a>
+
+                                                <span class="quantity">Qty: {{ cart_row.cart_item_qty }}</span>
+                                                <span class="quantity">Sell Price : <i class="fa fa-inr" aria-hidden="true"></i>{{ cart_row.cart_sell_price }}</span>
+
+            <span class="quantity">Addon Product Price: <i class="fa fa-inr" aria-hidden="true"></i>{{ cart_row.id|get_addon_price_of_cart_item }}</span>
+
+                                                
+                                                <!-- <span class="price_cart"><i class="fa fa-inr" aria-hidden="true"></i>{{ cart_row.id|single_cart_and_addon_cart_price:cart_row.user_id }}</span> -->
+
+
+                                            </div>
+                                            <div class="cart_remove">
+                                                <a href="Javascript:void(0)" onclick="delete_cart_item('{{ cart_row.id }}')"><i class="ion-android-close"></i></a>
+                                            </div>
+                                        </div>
+                                        
+                                        {% endfor %}
+                                        
+
+                                    </div>
+                                        <div class="mini_cart_table">
+                                            <div class="cart_total mt-10">
+                                                <span>Total:</span>
+                                                <span class="price"><i class="fa fa-inr" aria-hidden="true"></i>{{total_cart_price}}</span>
+                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mini_cart_footer">
+                                           <div class="cart_button">
+                                                <a href="{% url 'view_cart' %}">View cart</a>
+                                                <a href="{% url 'order_summary' %}">Checkout</a>
+                                            </div>
+                                        </div>
+
+                                    </div> 
+                                    <!--mini cart end-->
+                                
+                                    {% endif %}
+                                </div>
+                                {% endif %}  
+
+                                {% else %} <!-- if user not logged in -->
+
+                                <div class="mini_cart_wrapper">
+                                    <a href="javascript:void(0)"><span class="lnr lnr-cart"></span>My Cart</a>
+                                    <span class="cart_quantity">{{ total_cart_item }}</span>
+                                {% if total_cart_item != 0 %}
+                                    
+                                    
+                                    <!--mini cart-->
+                                      <div class="mini_cart">
+
+                                        <div class="cart-block-cus">
+
+                                        {% for new_cart_row in cart_list %}
+                                        <div class="cart_item">
+                                           <div class="cart_img">
+                                               <a href="{% url 'product_details' new_cart_row.id new_cart_row.product_slug %}">
+                                                {% for cart_pro_img in product_image_list %}
+                                                {% if cart_pro_img.product_id == new_cart_row.id %}
+                                                <img src="{{ cart_pro_img.product_list.url }}" alt="">
+                                                {% endif %}
+                                                {% endfor %}
+                                            </a>
+                                           </div>
+                                            <div class="cart_info">
+                                                <a href="{% url 'product_details' new_cart_row.id new_cart_row.product_slug %}">{{ new_cart_row.product_name }}</a>
+
+                                                <span class="quantity">Qty: {{ new_cart_row.quantity }}</span>
+
+                                                <span class="quantity">Sell Price : <i class="fa fa-inr" aria-hidden="true"></i>{{ new_cart_row.sell_price }}</span>
+
+                                                <span class="quantity">Addon Product Price: {{ new_cart_row.product_id_addon_id_list|get_addon_price_for_non_loggedin_user }}</span>
+
+                                            </div>
+                                            <div class="cart_remove">
+                                                <a href="Javascript:void(0)" onclick="delete_session_cart_item('{{new_cart_row.product_id_addon_id_list}}')"><i class="ion-android-close"></i></a>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+
+                                       
+                                       
+
+                                    </div>
+                                        <div class="mini_cart_table">
+
+                                            <div class="cart_total mt-10">
+                                                <span>Total:</span>
+                                                <span class="price"><i class="fa fa-inr" aria-hidden="true"></i>{{total_cart_price}}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mini_cart_footer">
+                                           <div class="cart_button">
+                                                <a href="{% url 'view_cart' %}">View cart</a>
+                                                <a href="{% url 'order_summary' %}">Checkout</a>
+                                            </div>
+                                           
+
+                                        </div>
+
+                                    </div> 
+                                    <!--mini cart end-->
+                                    
+                                    {% endif %}
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+                            
+                        </div>
+                        <div class="off_canvars_overlay">
+                
+        </div>
+        <div class="Offcanvas_menu">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="canvas_open">
+                            <span>MENU</span>
+                            <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
+                        </div>
+                        <div class="Offcanvas_menu_wrapper">
+                            <div class="canvas_close">
+                                  <a href="javascript:void(0)"><i class="ion-android-close"></i></a>  
+                            </div>
+
+                            <!--<div class="top_right text-right">
+                                <ul>
+                                   <li class="top_links"><a href="#"><i class="ion-android-person"></i> My Account<i class="ion-ios-arrow-down"></i></a>
+                                        <ul class="dropdown_links">
+                                            <li><a href="#">Checkout </a></li>
+                                            <li><a href="#">My Account </a></li>
+                                            <li><a href="#">Shopping Cart</a></li>
+                                            <li><a href="#">Wishlist</a></li>
+                                        </ul>
+                                    </li> 
+                                   <li class="language"><a href="#"><img src="{% static 'assets/img/logo/language.png' %}" alt="">en-gb<i class="ion-ios-arrow-down"></i></a>
+                                        <ul class="dropdown_language">
+                                            <li><a href="#"><img src="{% static 'assets/img/logo/language.png' %}" alt=""> English</a></li>
+                                            <li><a href="#"><img src="{% static 'assets/img/logo/language2.png' %}" alt=""> Germany</a></li>
+                                        </ul>
+                                    </li>
+                                     <li class="currency"><a href="#">$ USD<i class="ion-ios-arrow-down"></i></a>
+                                        <ul class="dropdown_currency">
+                                            <li><a href="#">EUR – Euro</a></li>
+                                            <li><a href="#">GBP – British Pound</a></li>
+                                            <li><a href="#">INR – India Rupee</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                            <div class="Offcanvas_follow">
+                                <label>Follow Us:</label>
+                                <ul class="follow_link">
+                                    <li><a href="#"><i class="ion-social-facebook"></i></a></li>
+                                    <li><a href="#"><i class="ion-social-twitter"></i></a></li>
+                                    <li><a href="#"><i class="ion-social-googleplus"></i></a></li>
+                                    <li><a href="#"><i class="ion-social-youtube"></i></a></li>
+                                </ul>
+                            </div>
+                            
+                            <<div class="search-container">
+                               <form action="#">
+                                    <div class="search_box">
+                                        <input placeholder="Search entire store here ..." type="text">
+                                        <button type="submit"><i class="ion-ios-search-strong"></i></button> 
+                                    </div>
+                                </form>
+                            </div> -->
+                            <div id="menu" class="text-left ">
+                                <ul class="offcanvas_main_menu">
+                                    <li class="menu-item-has-children active">
+                                        <a href="{% url 'index' %}">Home</a>
+                                      <!--   <ul class="sub-menu">
+                                            <li><a href="#">Home 1</a></li>
+                                            <li><a href="#">Home 2</a></li>
+                                            <li><a href="#">Home 3</a></li>
+                                            <li><a href="#">Home 4</a></li>
+                                            <li><a href="#">Home 5</a></li>
+                                        </ul> -->
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                                <a href="{% url 'about_us' %}">About Us</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Product</a>
+                                        <ul class="sub-menu">
+                                            <li class="menu-item-has-children">
+                                                {% for parent_cat_row in all_parent_category %}
+
+                                                <li>
+                                                    <a href="{% url 'product_list' parent_cat_row.id parent_cat_row.category_slug %}">
+                                                        {{ parent_cat_row.category_name }}
+                                                    </a>
+
+                                                    <ul>
+                                                    {% for all_sub_cat_row in all_sub_category %}
+            {% if all_sub_cat_row.parent_category == parent_cat_row.id and all_sub_cat_row.sub_category == 0 %}
+                                                        <li class="dropdown dropdown-submenu">
+                                                            <a href="{% url 'product_list' all_sub_cat_row.id all_sub_cat_row.category_slug %}" class="dropdown-toggle" data-toggle="dropdown">
+                                                            {{ all_sub_cat_row.category_name|slice:'20'|lower }}..
+                                                            </a>
+
+                                                            <ul class="dropdown-menu">
+                                                            {% for all_cat_row in all_category %}
+                {% if all_cat_row.sub_category == all_sub_cat_row.id and all_cat_row.sub_category != 0 %}
+                                                              <li>
+                                                                <a href="{% url 'product_list' all_cat_row.id all_cat_row.category_slug %}">{{ all_cat_row.category_name }}</a>
+                                                              </li>
+                                                              {% endif %}
+                                                            {% endfor %}
+                                                            </ul>
+
+                                                        </li>
+                                                        {% endif %}
+                                                    {% endfor %}     
+                                                    </ul>
+
+                                                </li>
+
+                                                {% endfor %}
+                                            </li>
+                                            
+                                            <!--<li class="menu-item-has-children">
+                                                <a href="#">Product Types</a>
+                                                <ul class="sub-menu">
+                                                    <li><a href="#">product details</a></li>
+                                                    <li><a href="#">product sidebar</a></li>
+                                                    <li><a href="#">product grouped</a></li>
+                                                    <li><a href="#">product variable</a></li>
+                                                </ul>
+                                            </li> -->
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="{% url 'video_list' %}">Video</a>
+                                   <!--      <ul class="sub-menu">
+                                            <li><a href="#">blog</a></li>
+                                            <li><a href="#">blog details</a></li>
+                                            <li><a href="#">blog fullwidth</a></li>
+                                            <li><a href="#">blog sidebar</a></li>
+                                        </ul> -->
+
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="{% url 'gallery_view' %}">Gallery </a>
+                                    <!--     <ul class="sub-menu">
+                                            <li><a href="#">About Us</a></li>
+                                            <li><a href="#">services</a></li>
+                                            <li><a href="#">Frequently Questions</a></li>
+                                            <li><a href="#">login</a></li>
+                                            <li><a href="#">compare</a></li>
+                                            <li><a href="#">privacy policy</a></li><li><a href="#">Coming Soon</a></li>
+                                        </ul> -->
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="{% url 'contact_us_view' %}">Contact Us</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="{% url 'our_valuable_customer' %}">Our Valuable Customer</a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--header middel end-->
+        <!--header bottom satrt-->
+        <div class="header_bottom sticky-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="main_menu header_position"> 
+                            <nav>  
+                                <ul>
+
+                                    <li><a href="{% url 'index' %}">home</a></li>
+                                    <li><a href="{% url 'about_us' %}">About Us</a></li>
+                                    <li class="mega_items"><a href="Javascript:void(0)">Products<i class="fa fa-angle-down"></i></a> 
+                                        <div class="mega_menu p-cus-mega">
+                                            {% for parent_cat_row in all_parent_category %}
+
+                                            <div class="col-md-3">
+                                               <a href="{% url 'product_list' parent_cat_row.id parent_cat_row.category_slug %}" class="heading-sec-p-cus" >
+                                                        {{ parent_cat_row.category_name }}
+                                                    </a>
+                                                    <ul class="second-ul-p-cus">
+                                                    {% for all_sub_cat_row in all_sub_category %}
+            {% if all_sub_cat_row.parent_category == parent_cat_row.id and all_sub_cat_row.sub_category == 0 %}
+                                                        <li class="dropdown dropdown-submenu second-li-p-cus">
+                                                            <a href="{% url 'product_list' all_sub_cat_row.id all_sub_cat_row.category_slug %}" class="dropdown-toggle" data-toggle="dropdown" title="{{ all_sub_cat_row.category_name }}">
+                                                            {{ all_sub_cat_row.category_name|slice:'20'|lower|capfirst }}..
+                                                            </a>
+
+                                                            <ul class="dropdown-menu thid-p-cus-ul">
+                                                            {% for all_cat_row in all_category %}
+                {% if all_cat_row.sub_category == all_sub_cat_row.id and all_cat_row.sub_category != 0 %}
+                                                              <li>
+                                                                <a href="{% url 'product_list' all_cat_row.id all_cat_row.category_slug %}">{{ all_cat_row.category_name }}</a>
+                                                              </li>
+                                                              {% endif %}
+                                                            {% endfor %}
+                                                            </ul>
+
+                                                        </li>
+                                                        {% endif %}
+                                                    {% endfor %}     
+                                                    </ul>
+                                            </div>
+                                           
+                                              {% endfor %}
+
+
+                                           
+                                        </div>
+                                    </li>
+                                    <li><a href="{% url 'video_list' %}">Video</a></li>
+                                    <li><a href="{% url 'gallery_view' %}">Gallery</a></li>
+                                    <li><a href="{% url 'contact_us_view' %}"> Contact Us</a></li>
+                                    <li><a href="{% url 'our_valuable_customer' %}">Our Valuable Customer</a></li>
+                                </ul>  
+                            </nav> 
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        <!--header bottom end-->
+     
+    </header>
+    <!--header area end-->
+    
+    <!--Offcanvas menu area start-->
+        
+       <!--  <div class>
+            <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
+        </div> -->
+    <!--Offcanvas menu area end-->
+
+    <style type="text/css">
+        .red_border {
+              outline: none;
+              border-color: #ff3333 !important;
+              box-shadow: 0 0 10px #ff3333 !important;
+              border: solid 1px #ff3333 !important;
+        }
+      </style>
+
+
+
+
+  

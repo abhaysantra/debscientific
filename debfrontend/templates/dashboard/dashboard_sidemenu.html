@@ -1,0 +1,26 @@
+{% load static %}
+        				<div class="myaccount-sidebar">
+        					<div class="profile-content">
+        						<div class="profile-image">
+									{% if user_detail.0.profile_image %}
+									<img src="{{ user_detail.0.profile_image.url }}" class="img-responsive" alt="">
+									{% else %}             
+									<img src="{% static 'no_user.jpg' %}" class="img-responsive" alt=""> 
+									{% endif %}            
+        						</div>
+                                <h4 class="my-name">{{ user_detail.0.full_name }}</h4>        						
+        					</div>
+        					<ul>
+    							<li><a href="{% url 'edit_profile' %}" class="active">Edit Profile</a></li>
+    							<li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                <li><a href="{% url 'my_address_list' %}">Manage Addresses</a></li>
+    							<li><a href="{% url 'my_order' %}">My Order</a></li>
+                                <li><a href="{% url 'view_cart' %}">My Cart</a></li>
+    							<li><a href="{% url 'my_wishlist' %}">My Wishlist</a></li>
+                                <li><a href="{% url 'my_notification' %}">All Notification</a></li>
+                                <li><a href="{% url 'my_wallet' %}">My wallet</a></li>
+                                <li><a href="{% url 'user_logout' %}">Log Out</a></li>
+    						</ul>
+        				</div> 
+
+                  

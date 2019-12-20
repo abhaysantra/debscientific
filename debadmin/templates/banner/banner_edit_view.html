@@ -1,0 +1,175 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<div class="wrapper">
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                Update Banner
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{% url 'debadmin_index' %}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+                <li>Update Banner</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <!-- <h3 class="box-title">Add Banner</h3> -->
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form name="main" id="banner_edit_form" action="{% url 'banner_update' %}" role="form" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="box-body">
+
+                                <div class="form-group" style="margin-top: 10px">
+                                    <label for="coupon_code" class="col-sm-2 control-label text-center">Type: <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-7">
+                                        
+                                        <select class="form-control" name="banner_type" id="banner_type" readonly>
+                                            <option value="{{ banner_det.0.banner_type }}" >{% if banner_det.0.banner_type == 'first_row' %} First Row
+                                      {% else %} Second Row
+                                      {% endif%}</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+
+                                <div class="form-group" style="margin-top: 10px">
+                                    <label for="coupon_code" class="col-sm-2 control-label text-center">Title 1: <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" name="title_1" id="title_1" value="{{ banner_det.0.title_1 }}">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="form-group" style="margin-top: 10px">
+                                    <label for="coupon_type" class="col-sm-2 control-label text-center">Title 2: <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-7">
+                                       <input type="text" class="form-control" name="title_2" id="title_2" value="{{ banner_det.0.title_2 }}">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                {% if banner_det.0.banner_type == 'second_row' %}
+                                <div class="form-group" id="third_div" style="margin-top: 10px">
+                                    <label for="coupon_type" class="col-sm-2 control-label text-center">Title 3: <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-7">
+                                       <input type="text" class="form-control" name="title_3" id="title_3" value="{{ banner_det.0.title_3 }}">
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="clearfix"></div>
+                                <div class="form-group" style="margin-top: 10px">
+                                    <label for="coupon_type" class="col-sm-2 control-label text-center">Link: <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-7">
+                                       <input type="text" class="form-control" name="link" id="link" value="{{ banner_det.0.link }}">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div> 
+                             <div class="form-group" style="margin-top: 10px;">
+                                    <label for="image" class="col-sm-2 control-label text-center">Image(1920 X 370 px): <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-7">
+                                        <input type="file"  name="banner_image" id="banner_image" onchange="readURL(this);">
+                                        <img id="prof_pic" src="{{ banner_det.0.banner_image.url }}"  alt="User Image" style="margin-top: 10px;width:150px;height:90px;" />
+                                    </div>
+                            </div>
+
+                            <input type="hidden" name="update_id" id="update_id" value="{{ banner_det.0.id }}" >
+                            <input type="hidden" name="old_image" id="old_image" value="{{ banner_det.0.banner_image.url }}" >
+                        
+     
+                            <div class="form-group">
+        
+                            <div class="clearfix"></div>
+                            <div class="box-footer" style="margin-top: 10px">
+                                <button type="button" class="btn btn-primary" onclick="return form_validation()">Update</button>
+                                <a href="{% url 'banner_view' %}" class="btn btn-danger">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+
+<script>
+    function readURL(input)
+    {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#prof_pic')
+                    .attr('src', e.target.result)
+                    .width(90)
+                    .height(90);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+</script>
+<script>
+    function validate()
+    {
+        if($('#title_1').val()=="")
+        {
+            $("#title_1").addClass("red_border");
+        }
+        else
+        {
+            $("#title_1").removeClass("red_border");
+        }
+
+        if($('#title_2').val()=="")
+        {
+            $("#title_2").addClass("red_border");
+        }
+        else
+        {
+            $("#title_2").removeClass("red_border");
+        }
+
+        if($('#link').val()=="")
+        {
+            $("#link").addClass("red_border");
+        }
+        else
+        {
+            $("#link").removeClass("red_border");
+        }
+    }
+    
+        function form_validation()
+        {
+            $('#banner_edit_form').attr('onchange', 'validate()');
+            $('#banner_edit_form').attr('onkeyup', 'validate()');
+            $('#banner_edit_form').attr('onfocus', 'validate()');
+
+            validate();
+
+              if ($('#banner_edit_form .red_border').size() > 0)
+              {
+                $('#banner_edit_form .red_border:first').focus();
+                return false;
+              }
+              else 
+              {
+                  $('#banner_edit_form').submit();
+              }
+        }
+
+</script>
+
+{% include 'common/admin_footer.html' %}

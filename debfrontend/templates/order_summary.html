@@ -1,0 +1,252 @@
+{% load custom_tags %}
+{% load static %}
+{% include 'common/header.html' %}
+
+
+<div class="check_shedul">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="shedul_info">
+          <ul>
+            <li class="active"><p>Order Summary</p></li>
+            <li class=""></li>
+            <li class=""><p>Delivery Address</p></li>
+            <li class=""></li>
+            <li class=""><p>Place Order</p></li>
+            <li></li>
+            <li><p>Payment</p></li>
+            <li></li>
+            <li><p>Completion</p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="order-summery">
+<div class="container-fluid">
+<div class="row">
+
+
+<div class="col-md-9">
+  <div class="order-cus-sm">  
+<div class="order-pro">
+<div class="order-block">
+<h3>Order Summary </h3>   
+</div>
+<div class="summ-block-page"> 
+
+{% for cart_row in cart_list %}
+<div class="block-block-page">
+  <div class="row">
+<div class="col-md-3 col-12">
+<div class="order-block-img lemon">
+  {% for cart_pro_img in product_image_list %}
+    {% if cart_pro_img.product_id == cart_row.cart_item_id %}
+<img src="{{ cart_pro_img.product_list.url }}" alt="">
+    {% endif %}
+  {% endfor %}
+</div>  
+</div>
+<div class="col-md-5 col-6">
+<div class="order-content-black">
+{{ cart_row.product_name }}</div> 
+<div class="pro-duct"><i class="fa fa-inr" aria-hidden="true"></i> {{ cart_row.cart_mrp_price }}</div>
+<div class="sea-block"><i class="fa fa-inr" aria-hidden="true"></i> {{ cart_row.cart_sell_price }}</div>
+<div class="off-block">{{ cart_row.cart_discount }}% off</div>
+<!-- <div class="sold-by">Sold by: xyz Company</div> -->
+<div class="sold-by-block-in">Quantity: {{ cart_row.cart_item_qty }} unit</div>
+
+<div class="sold-by-block-in">Addon Product : {{ cart_row.id|get_addon_name_of_cart_item|capfirst }} | Price : <i class="fa fa-inr" aria-hidden="true"></i> {{ cart_row.id|get_addon_price_of_cart_item }}</div>
+</div>
+<div class="col-md-3 col-6">
+   <div class="product_variant quantity">
+  <label>quantity</label>
+  <input min="1" max="100" id="cart_qty_{{ cart_row.id }}" value="{{ cart_row.cart_item_qty }}" type="number">
+  <a href="Javascript:void(0)" onclick="update_cart_item_qty('{{ cart_row.cart_item_id }}','{{ cart_row.id }}')" style="background-color: #4CAF50;color: white;font-size: 12px;border-radius: 9px;padding: 3px">Update</a>  
+  </div> 
+  </div>
+  <div class="col-md-1 col-6">
+    <div class="remove"><a href="Javascript:void(0)" onclick="delete_cart_item('{{ cart_row.id }}')">REMOVE</a></div>
+  </div>
+</div>
+</div>
+
+{% endfor %}
+
+
+
+</div>
+
+</div>
+<div class="text-right">
+  <div class="continue">
+    <!-- <a href="{% url 'delivery_address' %}">Continue</a>  -->
+    <a href="Javascript:void(0)" onclick="open_pincode_modal()" >Continue</a> 
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+</div>
+<div class="col-md-3">
+<div class="order-pro">
+<div class="billing-block">
+<h3>Total Billing Amount</h3> 
+</div>
+
+<div class="total-amount">
+<p>Sub Total<span><i class="fa fa-inr" aria-hidden="true"></i> {{total_cart_price}}</span></p> 
+<p>Shipping Charge<span><i class="fa fa-inr" aria-hidden="true"></i> {{ total_shipping_charge }}</span></p>    
+</div>
+
+<div class="total-amount-block">
+<p>Total<span><i class="fa fa-inr" aria-hidden="true"></i> {{total_cart_price}}</span></p>      
+</div>  
+
+<div class="payble">
+<p>Total Payable<span><i class="fa fa-inr" aria-hidden="true"></i> {{ total_cart_price|add:total_shipping_charge }}</span></p>
+<p class="purchase">You are saving <i class="fa fa-inr" aria-hidden="true"></i> {{total_cart_save_price}} on this purchase</p>  
+</div>
+</div>
+<div class="safe-block">
+  <img src="{% static 'assets/img/safe.png' %}" alt="">
+  <p>Safe &amp; Secure Payment</p>
+  <img src="{% static 'assets/img/aw1.png' %}" alt="">
+  <p>Quality Seal</p>
+  <img src="{% static 'assets/img/lowes.png' %}" alt="">
+  <p><b>Lowest Price Guaranteed</b></p>
+  <img src="{% static 'assets/img/can.png' %}" alt="">
+  <p>Easy Cancelation</p>
+  <img src="{% static 'assets/img/auth.png' %}" alt="">
+  <p>100% Authentic Product</p>
+</div>
+</div>
+
+
+  
+</div>  
+  
+</div>  
+
+
+  
+</div>
+
+
+
+<div class="modal fade" id="pincode_check_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: bisque;">
+        <h5 class="modal-title" id="exampleModalLabel">Enter Your Pincode</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" id="pincode_form" action="">
+      <div class="modal-body">
+       <input type="text" class="form-control" name="pincode_check" id="pincode_check" value="">
+       <span id="check_pin" style="color: red;"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="pin_check_btn" onclick="pincode_check_form_submit()" class="btn btn-primary">Check</button>
+        <a id="go_continue_btn" style="display: none;"  href="{% url 'delivery_address' %}" class="btn btn-primary">Go Next Step</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function open_pincode_modal()
+  {
+    $('#pincode_check_Modal').modal('show');
+  }
+
+  function pincode_valid()
+  {
+    var pincodeExpression =  /^\d{6}$/;
+    var pincode = $('#pincode_check').val();
+
+    if(pincode=="")
+    {
+        $('#pincode_check').addClass("red_border");  
+    }
+    else
+    {
+      if(!pincodeExpression.test(pincode))
+      {
+        $('#pincode_check').addClass("red_border"); 
+        $('#check_pin').html('Enter your proper pincode'); 
+      }
+      else
+      {
+        $("#pincode_check").removeClass("red_border");
+        $('#check_pin').html('');
+      }
+    }
+  }
+
+
+
+        function pincode_check_form_submit()
+        {
+            $('#pincode_form').attr('onchange', 'pincode_valid()');
+            $('#pincode_form').attr('onkeyup', 'pincode_valid()');
+            $('#pincode_form').attr('onfocus', 'pincode_valid()');
+
+            pincode_valid();
+
+              if ($('#pincode_form .red_border').size() > 0)
+              {
+                $('#pincode_form .red_border:first').focus();
+                return false;
+              }
+              else 
+              {
+                var pincode = $('#pincode_check').val();
+                  $.ajax({
+                    url:"{% url 'check_pincode_service' %}",
+                    data:{pincode:pincode, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    dataType:'json',
+                    type:'post',
+                    success: function(data)
+                    {
+                      if(data.result == 'no')
+                      {
+                        $('#pincode_check').addClass("red_border"); 
+                        $('#check_pin').html('Service is not available in this pincode!!!');
+                      }
+                      if(data.result == 'yes')
+                      {
+                        $('#check_pin').html('');
+                        $('#pin_check_btn').css('display','none');
+                        $('#go_continue_btn').css('display','block');
+                      }
+                      
+                    }
+                  });
+              }
+        }
+</script>
+
+
+
+
+
+
+
+{% include 'common/footer.html' %}

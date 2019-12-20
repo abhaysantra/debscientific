@@ -1,0 +1,82 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>Enquiry List</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'debadmin_index' %}"><i class="fa fa-dashboard" aria-hidden="true"></i>Dashboad</a></li>
+            <li class="active">Enquiry List</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12 table-responsive">
+                <div class="box">
+                    <div class="box-header">
+                           <h3 class="box-title">All Enquiries({{ enquiry_list.count }})</h3>
+                    </div>
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <a class="close" href="#" data-dismiss="alert">×</a>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                     
+                    <div class="clearfix"></div>
+                    <!-- /.box-header -->
+          <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="bg-blue">
+                        <!-- <th><input type="checkbox" id="all_chk" name="all_chk" onclick="check_all()"></th> -->
+                        <th>Serial No.</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Message</th>
+                        <th>Enquiry Date</th>                                
+                        <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for enquiry_row in enquiry_list %}
+                    <tr>
+                        <!--<td><input type="checkbox" id="check" name="check" value="{{ enquiry_row.id }}"></td> -->
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ enquiry_row.name }}</td>                     
+                        <td>{{ enquiry_row.email }}</td>
+                        <td>{{ enquiry_row.phone_number }}</td>
+                        <td>{{ enquiry_row.message }}</td>
+                        <td>{{ enquiry_row.created_date }}</td>
+
+                        
+                        <td class="last_th">
+                            
+                            <a href="{% url 'enquiry_delete' enquiry_row.id %}" class="btn-danger btn-sm" name="" id="" onclick="return confirm('Are you sure ?')" title="delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                           
+                        </td>
+                    </tr>
+                  {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+</div>
+
+
+
+{% include 'common/admin_footer.html' %}

@@ -1,0 +1,114 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>Low Stock List</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'debadmin_index' %}"><i class="fa fa-dashboard" aria-hidden="true"></i>Dashboad</a></li>
+            <li class="active">Low Stock Products List</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12 table-responsive">
+                <div class="box">
+                    <div class="box-header">
+                           <h3 class="box-title">All Low Stock Products({{ total_low_stock_product }})</h3>
+                    </div>
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <a class="close" href="#" data-dismiss="alert">×</a>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    
+                     
+                    <div class="clearfix"></div>
+                    <!-- /.box-header -->
+          <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="bg-blue">
+                        <th>Serial No.</th>
+                        <th>Product Image</th>
+                        <th>Product Name</th>
+                        <th>Available Quantity</th>                        
+                        <th>Created Date</th>
+                        <th>Modified Date</th>
+                        <th>Action</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for low_stock_row in low_stock_list %}
+                    <tr> 
+                        <td>{{ forloop.counter }}.</td>                                          
+                        <td>
+                            {% for product_img_row in all_product_image %}
+                            {% if product_img_row.product_id == low_stock_row.id %}
+                                {% if product_img_row.product_list %}
+                                    <a href="{% url 'product_image_list_view' low_stock_row.id %}">
+                                    <img src="{{ product_img_row.product_list.url }}" height="100px" width="100px" style="cursor: pointer;" title="Product Images">
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'product_image_list_view' low_stock_row.id %}">
+                                    <img src="{% static 'image/no-image.jpg' %}" height="100px" width="100px" style="cursor: pointer;" title="No Images">
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                          {% endfor %}
+                        </td>
+                        <td>{{ low_stock_row.product_name }}</td>
+                        <td>{{ low_stock_row.available_qty }}</td>
+                        
+                        <td>{{ low_stock_row.created_date }}</td>
+                        <td>{{ low_stock_row.modified_date }}</td>
+
+                        <td class="last_th">
+                                <a href="{% url 'product_edit_view' low_stock_row.id %}" class="btn-primary btn-sm" title="Edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                
+                        </td>
+                        
+                        
+                    </tr>
+                  {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+function order_status_change(status, order_id)
+{
+    if(confirm('Are You Sure?'))
+    {
+        $.ajax({
+            url:"{% url 'change_order_status' %}",
+            data:{status:status,order_id:order_id ,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType:'json',
+            type:'post',
+            success: function(data)
+            {
+                location.reload(); 
+            }
+        });
+    } 
+}
+</script>
+
+{% include 'common/admin_footer.html' %}

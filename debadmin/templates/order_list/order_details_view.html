@@ -1,0 +1,386 @@
+{% load debadmin_custom_tags %}
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h3>
+      ORDER DETAILS <br>
+      BOOKING ID: {{ order_info.0.order_unique_id }}
+     </h3>
+             
+      <ol class="breadcrumb">
+        <li><a href="{% url 'debadmin_index' %}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li><a href="">Order details</a></li>  
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="row">
+        <div class="col-xs-6">      
+            <!-- /.box-header -->
+           <form> 
+            <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Billing Details</h3>
+            </div>
+          
+            <div class="box-body">
+              <table id="" class="table table-bordered table-striped"> 
+                <tbody>   
+                  
+               <tr>
+                  <th>Name :</th>
+                  <td>{{ bil_address_info.0.full_name }}</td>
+              </tr>
+              <tr>
+                  <th>Email :</th>
+                  <td>{{ bil_address_info.0.email }}</td>
+              </tr>
+               <tr>
+                  <th>Phone Number :</th>
+                  <td>{{ bil_address_info.0.mobile_number }}</td>
+              </tr>
+               <tr>
+                  <th>Pincode :</th>
+                  <td>{{ bil_address_info.0.pincode }}</td>
+              </tr>
+              <tr>
+                  <th>Address :</th>
+                  <td>{{ bil_address_info.0.address }}, {{ bil_address_info.0.state }}, {{ bil_address_info.0.country }}</td>
+              </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+             </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-6">      
+            <!-- /.box-header -->
+           <form> 
+            <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Delivery Details</h3>
+            </div>
+          
+            <div class="box-body">
+              <table id="" class="table table-bordered table-striped"> 
+                <tbody>  
+                   
+              <tr>
+                  <th>Name :</th>
+                  <td>{{ deli_address_info.0.full_name }}</td>
+              </tr>
+              <tr>
+                  <th>Email :</th>
+                  <td>{{ deli_address_info.0.email }}</td>
+              </tr>
+               <tr>
+                  <th>Phone Number :</th>
+                  <td>{{ deli_address_info.0.mobile_number }}</td>
+              </tr>
+               <tr>
+                  <th>Pincode :</th>
+                  <td>{{ deli_address_info.0.pincode }}</td>
+              </tr>
+              <tr>
+                  <th>Address :</th>
+                  <td>{{ deli_address_info.0.address }}, {{ deli_address_info.0.state }}, {{ deli_address_info.0.country }}</td>
+              </tr>
+              
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+             </form>
+          </div>
+          <!-- /.box -->
+        </div>
+
+
+        
+      </div>
+      <div class="row">
+        <div class="col-xs-12">           
+            <!-- /.box-header -->
+          <form> 
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Order details</h3><br>
+              {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <a class="close" href="#" data-dismiss="alert">×</a>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+            </div>
+            
+            <div class="box-body">
+              <table id="" class="table table-bordered table-striped">
+                <thead>
+                  <tr class="bg-blue">
+                    <th>Sl no.</th>
+                    <th>Status</th> 
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>MRP Price</th>                   
+                    <th>Discount</th>
+                    <th>Net Price</th>
+                    <th>Quantity</th>
+                    <th>Addon Product</th>
+                    <th>Total </th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                {% for order_details_row in order_details_info %}
+                 
+                <tr>
+                  <td> {{ forloop.counter }}.</td>
+                  <th>
+                    <select name='status_change' onchange="order_details_status_change(this.value,'{{ order_details_row.id }}')">
+                                {% if order_details_row.order_product_status == 'Pending' %}
+                                <option value="Pending">Pending</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Cancelled">Cancelled</option>
+                                {% endif %}
+
+                                {% if order_details_row.order_product_status == 'Confirmed' %}
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Dispatched">Dispatched</option>
+                                {% endif %}
+
+                                {% if order_details_row.order_product_status == 'Dispatched' %}
+                                <option value="Dispatched">Dispatched</option>
+                                <option value="Delivered">Delivered</option>
+                                {% endif %}
+
+                                {% if order_details_row.order_product_status == 'Delivered' %}
+                                <option value="Delivered">Delivered</option>
+                                {% endif %}
+
+                                {% if order_details_row.order_product_status == 'Cancelled' %}
+                                <option value="Cancelled">Cancelled</option>
+                                {% endif %}
+
+                                {% if order_details_row.order_product_status == 'Returned' %}
+                                <option value="Cancelled">Returned</option>
+                                {% endif %}
+                            </select>
+                            {% if order_details_row.order_product_status == 'Cancelled' %}
+                            <button type="button" class="btn btn-success" onclick="show_cancel_reason('{{ order_details_row.id }}')">Show Reason</button>
+                            {% endif %}
+
+                            {% if order_details_row.return_status == 'Waiting' %}
+                            <button type="button" class="btn btn-success" onclick="show_return_request('{{ order_details_row.id }}')">Returned Request</button>
+                            {% endif %}
+
+                  </th>
+                  <th>
+                  {% for pro_image_row in pro_image_info %}
+                    {% if pro_image_row.product_id == order_details_row.order_product_id %} 
+                    <img src="{{ pro_image_row.product_list.url }}" height="50px" width="50px" style="cursor: pointer;" title="Product Image">
+                    {% endif %}
+                  {% endfor %}
+                  </th>
+                  {% for pro_details_row in pro_details_info %}
+                    {% if pro_details_row.id == order_details_row.order_product_id %}
+                    <th>{{ pro_details_row.product_name }}</th>
+                    {% endif %}
+                  {% endfor %}
+                    <th><i class="fa fa-inr" aria-hidden="true"></i>
+                        {{ order_details_row.order_product_mrp }}
+                    </th>                   
+                    <th>
+                        {{ order_details_row.order_product_discount }}%
+                    </th>
+                    <th><i class="fa fa-inr" aria-hidden="true"></i> 
+                        {{ order_details_row.order_product_price }}
+                    </th>
+                    <th>{{ order_details_row.order_product_qty }}</th>
+                    <th>
+                      {% with addon_product_details_list=order_details_row.addon_product_id_list|get_details_of_addon_product_list %}
+                        {% if addon_product_details_list %}
+                        {% for addon_list_row in addon_product_details_list %}
+                            <li>{{ addon_list_row.sub_product_name }}(Rs. {{ addon_list_row.sub_product_price }})</li>
+                        {% endfor %}
+                        {% else %}
+                        No Addon Product
+                        {% endif %}
+                        {% endwith %}
+                    </th>
+                    <th><i class="fa fa-inr" aria-hidden="true"></i> 
+            {{ order_details_row |calculate_total_order_price_of_each_product_with_addon }} 
+                    </th>
+                    <!--<th><i class="fa fa-inr" aria-hidden="true"></i> 
+            {{ order_details_row.order_product_price|multiply:order_details_row.order_product_qty }} 
+                    </th>-->
+                    <!-- <th>{{ order_details_row.order_product_status }}</th> -->
+                  
+
+            </tr>
+
+
+            <!-- Modal -->
+<div class="modal fade" id="ShowCancelReasonModal_{{ order_details_row.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #3c8dbc;color: white;">
+        <h5 class="modal-title" id="exampleModalLongTitle">Cancel Reason</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ order_details_row.cancel_reason }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" style="background-color: red;color: white;" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ShowReturnRequestModal_{{ order_details_row.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #3c8dbc;color: white;">
+        <h5 class="modal-title" id="exampleModalLongTitle">Return Reason</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ order_details_row.return_reason }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" style="background-color: #00ff5a;color: white;" data-dismiss="modal" onclick="submit_return_status('{{ order_details_row.id }}','Accepted')">Accepted</button>
+        <button type="button" class="btn btn-secondary" style="background-color: red;color: white;" data-dismiss="modal" onclick="submit_return_status('{{ order_details_row.id }}','Rejected')">Rejected</button>
+        <button type="button" class="btn btn-secondary" style="background-color: #1f2f2d;color: white;" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function show_cancel_reason(order_det_id)
+  {
+    $('#ShowCancelReasonModal_'+order_det_id).modal('show');
+  }
+
+  function show_return_request(order_det_id)
+  {
+    $('#ShowReturnRequestModal_'+order_det_id).modal('show');
+  }
+
+  function submit_return_status(order_det_id,status)
+  {
+    if(confirm('Are you sure?'))
+    {
+      $.ajax({
+            url:"{% url 'change_return_status' %}",
+            data:{status:status,order_det_id:order_det_id ,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType:'json',
+            type:'post',
+            success: function(data)
+            {
+                location.reload(); 
+            }
+        });
+    }
+  }
+</script>
+
+            {% endfor %}
+           
+
+          
+               
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+             </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+
+         <div class="col-xs-12">
+          
+            
+            <!-- /.box-header -->
+        
+          <div class="box">
+            <div class="box-header">
+            <a href="{% url 'order_list_view' %}" class="btn btn-danger btn-action" title="Back" ><i class="fa fa-backward" ></i> Back</a>
+
+
+            <a class="btn btn-primary" id="print_unit" title="Generate Invoice" href="{% url 'generate_pdf_from_html' order_info.0.id %}" >Generate Invoice</a>
+
+            
+                {% if total_invoice == 0 %}
+                    <span class="btn btn-primary" title="First Generate Invoice"><i class="fa fa-refresh" aria-hidden="true"></i></span>               
+                {% else %}
+                  <a class="btn btn-primary" href="{{ order_invoice_info.0.invoice.url }}" download="" title="Download Invoice" ><i class="fa fa-cloud-download" aria-hidden="true"></i></a>
+                {% endif %}
+          
+          
+          </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+       
+
+       
+          <!-- /.box -->
+        </div>
+      </div>
+      </div>
+      <!-- /.row -->
+    </section>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+function order_details_status_change(status, order_det_id)
+{
+    if(confirm('Are You Sure?'))
+    {
+        $.ajax({
+            url:"{% url 'change_order_details_status' %}",
+            data:{status:status,order_det_id:order_det_id ,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType:'json',
+            type:'post',
+            success: function(data)
+            {
+                location.reload(); 
+            }
+        });
+    } 
+}
+</script>
+
+
+
+
+
+
+{% include 'common/admin_footer.html' %}

@@ -1,0 +1,50 @@
+<?php include("header.php"); ?>
+
+
+<div class="main-content-wrapper">
+                <div class="page-inner ptb--80">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6 col-md-10">
+                                <div class="form-box">
+                                    <h1>Login</h1>
+                                    <p>Please login using account details bellow.</p>
+                                    <form class="form" action="dashboard.php" method="post">
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="email" name="login_email" id="login_email" class="sadia-input-form" placeholder="Email">
+                                            </div>
+                                        </div>
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="password" name="login_password" id="login_password" class="sadia-input-form" placeholder="Password">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="sadia-form-group row">
+                                            <div class="col-lg-12 col-12">
+                                                <a href="#" class="forgot-pass">Forgot your password?</a>
+                                                <button type="submit" class="btn btn--large btn-style-3">login</button>
+                                     
+                                            </div>
+                                           
+                                        </div>
+                                    </form>
+                                     <div class="sign-block-up">
+                                            <a href="sign-up.php">Sign Up</a>
+                                            </div>
+                                    <a class="create-account-link" href="#">New Here? Create an account</a>
+                                </div>
+                            </div>
+                        </div>   
+                    </div>   
+                </div>
+            </div>
+
+
+
+
+
+
+
+   <?php include("footer.php");?>

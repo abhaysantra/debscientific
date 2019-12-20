@@ -1,0 +1,183 @@
+{% load custom_tags %}
+{% load static %}
+{% include 'common/header.html' %}
+
+
+
+<div class="check_shedul">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="shedul_info">
+          <ul>
+            <li class="active"><p>Order Summery</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Delivery Address</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Place Order</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Payment</p></li>
+            <li></li>
+            <li><p>Completion</p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<section class="main-container col1-layout payment_sect">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="page-content page-order">
+          
+        <div class="page-title method-block">
+            <h2>Select Payment Method</h2>
+          </div>
+
+
+        <div class="order-detail-content cradit-block">
+         <div class="row">
+            <div class="col-md-9">
+           <form id="payment_type_form" action="" method="post">{% csrf_token %}
+             <div class="form-group">
+
+                <label class="">
+                 <input type="radio" name="payment_type" value="online" onclick="btn_show(this.value)"> <span class="label-text">
+                 Cradit Card / Debit Card
+               </span></label>
+
+                 <label class="">
+                <input type="radio" name="payment_type" value="online" onclick="btn_show(this.value)"> <span class="label-text">
+                 Net Banking
+               </span></label>
+
+               <label class="">
+                 <input type="radio" name="payment_type" value="online" onclick="btn_show(this.value)"> <span class="label-text">
+                 BHIM UPI
+               </span></label>
+
+               <label class="">
+                 <input type="radio" name="payment_type" value="cod" onclick="btn_show(this.value)"> <span class="label-text">
+                 Cash On Delivery
+               </span></label>
+
+               <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id" value="">
+             </div>
+             <div class="form-group">
+             </div>
+           </form>
+
+        </div>
+      
+         </div>
+        <div class="cart_navigation text-center"> 
+          <a class="checkout-btn process" style="cursor: not-allowed;background-color: darkgray;border-color:darkgray; " id="disable_btn" href="javascript:void(0)">Process Order</a>
+
+          <a class="checkout-btn process" style="display: none;" id="offline_btn" href="javascript:void(0)" onclick="payment_type_submit()">Process Order</a> 
+          <a class="checkout-btn process" style="display: none;" id="online_btn" href="javascript:void(0)" onclick="openRazorpay()">Process Order</a>
+       </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<script type="text/javascript">
+  function btn_show(value)
+  {
+    if(value=='cod')
+    {
+      $('#offline_btn').css('display','block');
+      $('#online_btn').css('display','none');
+      $('#disable_btn').css('display','none');
+    }
+    else if(value=='online')
+    {
+      $('#online_btn').css('display','block');
+      $('#offline_btn').css('display','none');
+      $('#disable_btn').css('display','none');
+    }
+    else
+    {
+      $('#online_btn').css('display','none');
+      $('#offline_btn').css('display','none');
+      $('#disable_btn').css('display','block');
+    }
+  }
+
+
+  function payment_type_submit()
+  {
+    $.ajax({
+      url:"{% url 'order_submit_action' %}",
+      data: $('#payment_type_form').serialize(),
+      dataType:'json',
+      type: 'post',
+      success: function(data){
+        window.location.href ="{% url 'completation' %}";
+      }
+    });
+  }
+</script>
+
+
+<script type="text/javascript" src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script type="text/javascript">
+    
+function openRazorpay()
+{
+
+var payable_amount='{{ total_cart_price }}';
+var order_id='{{ uniq_order_id }}';
+var user_name='{{ user_detail.0.full_name }}';
+var user_email='{{ user_detail.0.login_email }}';
+var user_contact='{{ user_detail.0.phone_number }}';
+var user_id='12';
+var amount = parseFloat(payable_amount);
+var total = parseFloat(amount*100);
+
+
+var options = {
+    "key": "rzp_live_9qr3S2Ay8peXBi",
+    "amount": total,
+    "name": "DebScientific",
+    "description": 'Order Payment',
+    "image": "{% static 'assets/img/logodemo.png' %}",
+    "handler": function (response){
+      $('#razorpay_payment_id').val(response.razorpay_payment_id);
+      payment_type_submit()
+
+    },
+    "prefill": {
+        "name": user_name,
+        "contact": user_contact,
+        "email": user_email
+    },
+    "theme": {
+        "color": "#238de9;"
+    }
+    
+};
+
+
+var rzp1 = new Razorpay(options);
+console.log(options);
+$('#rzp-button1').html('Pay ');
+      rzp1.open();
+      e.preventDefault();
+}
+     
+    
+</script>
+
+
+
+
+
+{% include 'common/footer.html' %}

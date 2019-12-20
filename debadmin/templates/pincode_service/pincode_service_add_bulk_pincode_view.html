@@ -1,0 +1,121 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<div class="wrapper">
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                Add Bulk of Pincode
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{% url 'debadmin_index' %}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+                <li>Add Bulk of Pincode</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <!-- <h3 class="box-title">Add Home Slider</h3> -->
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form name="main" id="pincode_service_add_form" action="{% url 'pincode_service_add_bulk_pincode' %}" role="form" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="box-body">
+
+                            <div class="form-group" style="margin-top: 10px;">
+                                    <label for="text" class="col-sm-2 control-label text-center">Sample Pincode File: <span style="color: rgb(255, 0, 0); padding-left: 2px;"></span></label>
+                                    <a class="btn btn-primary" href="/media/sample_pincode/center_pincode.xlsx" download="" title="Download Sample xlsx file"><i class="fa fa-cloud-download" aria-hidden="true"></i></a>
+                            </div>
+                            <div class="clearfix"></div>
+                             <div class="form-group" style="margin-top: 10px;">
+                                    <label for="text" class="col-sm-2 control-label text-center">Pincode: <span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="file" name="pincode_file" id="pincode_file" required="" style="margin-bottom:12px" > 
+                                    </div>
+                            </div>
+
+                               
+                                <div class="clearfix"></div>
+                                <div class="form-group">
+                                <div class="box-footer" style="margin-top: 10px">
+                                    <button type="button" class="btn btn-primary" onclick="return form_validation()">Submit</button>
+                                    <a href="{% url 'pincode_service_listview' %}" class="btn btn-danger">Cancel</a>
+                                </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+
+<script>
+    function readURL(input)
+    {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#prof_pic')
+                    .attr('src', e.target.result)
+                    .width(90)
+                    .height(90);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+<script>
+    function validate()
+    {   
+        var pincodeExpression =  /^\d{6}$/;
+        var pincode_file = $('#pincode_file').val();
+        // alert(pincode_file);
+
+        if(!pincode_file)
+              {
+                $('#pincode_file').addClass("red_border");  
+                // $('#check_pincode').html('Enter Proper Pincode');
+              }
+        else
+              {
+                $("#pincode_file").removeClass("red_border");
+                // $("#check_pincode").html("");
+              }
+    }
+    
+    function form_validation()
+    {
+        $('#pincode_service_add_form').attr('onchange', 'validate()');
+        $('#pincode_service_add_form').attr('onkeyup', 'validate()');
+        $('#pincode_service_add_form').attr('onfocus', 'validate()');
+
+        validate();
+
+          if ($('#pincode_service_add_form .red_border').size() > 0)
+          {
+            $('#pincode_service_add_form .red_border:first').focus();
+            return false;
+          }
+          else 
+          {
+            $('#pincode_service_add_form').submit();
+          }
+    }
+
+</script>
+
+
+{% include 'common/admin_footer.html' %}

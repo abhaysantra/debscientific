@@ -1,0 +1,208 @@
+{% load custom_tags %}
+{% load static %}
+{% include 'common/header.html' %}
+    <!--breadcrumbs area start-->
+    <div class="breadcrumbs_area">
+        <div class="container">   
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb_content">
+                        <ul>
+                            <li><a href="{% url 'index' %}">Home</a></li>
+                            <li>View Cart</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>         
+    </div>
+    <!--breadcrumbs area end-->
+
+
+<!--shopping cart area start -->
+    <div class="shopping_cart_area mt-32">
+        <div class="container">  
+            <form action="#"> 
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table_desc">
+                            <div class="cart_page table-responsive">
+                                <table>
+                            <thead>
+                                <tr>
+                                   
+                                    <th class="product_thumb">Image</th>
+                                    <th class="product_name">Product</th>
+                                    <th class="product_name">Addon Product</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product_quantity">Quantity</th>
+                                    <th class="product_total">Total</th>
+                                    <th class="product_remove">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                {% if 'user_session_id' in request.session %}
+
+                                {% if cart_list.count != 0 %}
+                                {% for cart_row in cart_list %}
+                                
+                                
+                                <tr>
+                                  
+                                    <td class="product_thumb"><a href="{% url 'product_details' cart_row.cart_item_id cart_row.product_slug %}">
+                                        {% for cart_pro_img in product_image_list %}
+                                        {% if cart_pro_img.product_id == cart_row.cart_item_id %}
+                                        <img src="{{ cart_pro_img.product_list.url }}" alt="">
+                                        {% endif %}
+                                        {% endfor %}
+                                    </a></td>
+                                    <td class="product_name"><a href="{% url 'product_details' cart_row.cart_item_id cart_row.product_slug %}">{{ cart_row.product_name }}</a></td>
+
+                                    <td class="product_name">
+                                        {% with addon_list=cart_row.id|get_addon_list %}
+                                        {% if addon_list %}
+                                        {% for addon_list_row in addon_list %}
+                                            <li>{{ addon_list_row.sub_product_name }}(Rs. {{ addon_list_row.sub_product_price }})</li>
+                                        {% endfor %}
+                                        {% else %}
+                                        No Addon Product
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+
+                                    <td class="product-price"><i class="fa fa-inr" aria-hidden="true"></i>{{ cart_row.cart_sell_price }}</td>
+                                    <td class="product_quantity">
+                                        <label>Quantity</label> 
+                                        <input min="1" max="100" id="cart_qty_{{ cart_row.id }}" value="{{ cart_row.cart_item_qty }}" type="number">
+                                        <a href="Javascript:void(0)" onclick="update_cart_item_qty('{{ cart_row.cart_item_id }}','{{ cart_row.id }}')" style="background-color: #4CAF50;color: white;font-size: 12px;border-radius: 9px;padding: 3px">Update</a> 
+                                    </td>
+                                    <td class="product_total"><i class="fa fa-inr" aria-hidden="true"></i> {{ cart_row.id|single_cart_and_addon_cart_price:cart_row.user_id }}</td>
+                                     <td class="product_remove"><a href="Javascript:void(0)" onclick="delete_cart_item('{{ cart_row.id }}')"><i class="fa fa-trash-o"></i></a></td>
+
+
+                                </tr>
+                                
+                                {% endfor %}
+                                {% endif %}
+
+                                {% else %}
+
+
+                                {% if cart_list.count != 0 %}
+                                {% for sess_cart_row in cart_list %}
+                                
+                                
+                                <tr>
+                                  
+                                    <td class="product_thumb"><a href="{% url 'product_details' sess_cart_row.id sess_cart_row.product_slug %}">
+                                        {% for cart_pro_img in product_image_list %}
+                                        {% if cart_pro_img.product_id == sess_cart_row.id %}
+                                        <img src="{{ cart_pro_img.product_list.url }}" alt="">
+                                        {% endif %}
+                                        {% endfor %}
+                                    </a></td>
+                                    <td class="product_name"><a href="{% url 'product_details' sess_cart_row.id sess_cart_row.product_slug %}">{{ sess_cart_row.product_name }}</a></td>
+
+                                    <td class="product_name">
+                                        {% with addon_list=sess_cart_row.product_id_addon_id_list|get_addon_list_for_non_loggedin_user %}
+                                        {% if addon_list %}
+                                        {% for addon_list_row in addon_list %}
+                                            <li>{{ addon_list_row.sub_product_name }}(Rs. {{ addon_list_row.sub_product_price }})</li>
+                                        {% endfor %}
+                                        {% else %}
+                                        No Addon Product Add
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+
+                                    <td class="product-price"><i class="fa fa-inr" aria-hidden="true"></i>{{ sess_cart_row.sell_price }}</td>
+                                    <td class="product_quantity">
+                                        <label>Quantity</label> 
+                                        
+
+                                        <input min="1" max="100" id="sess_cart_qty_{{ sess_cart_row.product_id_addon_id_list }}" value="{{ sess_cart_row.quantity }}" type="number">
+                                        <a href="Javascript:void(0)" onclick="update_session_cart_item_qty('{{ sess_cart_row.product_id_addon_id_list }}')" style="background-color: #4CAF50;color: white;font-size: 12px;border-radius: 9px;padding: 3px">Update</a> 
+
+
+
+                            {% with sess_qty=session_cart_list|get_product_qty:sess_cart_row.product_id_addon_id_list %}
+                                        
+                                    </td>
+                                    <td class="product_total"><i class="fa fa-inr" aria-hidden="true"></i> 
+                                        <!--{{ sess_cart_row.sell_price|multiply:sess_qty }}</td>-->
+                                        {{ sess_qty|calculate_cart_and_addon_product_price_non_loggedin_user:sess_cart_row.product_id_addon_id_list }}
+                                    </td>
+                                     <td class="product_remove"><a href="Javascript:void(0)" onclick="delete_session_cart_item('{{ sess_cart_row.product_id_addon_id_list }}')"><i class="fa fa-trash-o"></i></a></td>
+
+                                     {% endwith %}
+                                </tr>
+                                
+                                {% endfor %}
+                                {% endif %}
+
+
+
+                                {% endif %}
+
+
+                            </tbody>
+                        </table>   
+                            </div>  
+                            <!-- <div class="cart_submit">
+                                <button type="submit">update cart</button>
+                            </div> -->      
+                        </div>
+                     </div>
+                 </div>
+                 <!--coupon code area start-->
+                <div class="coupon_area">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="coupon_code left">
+                                <h3>Coupon</h3>
+                                <div class="coupon_inner">   
+                                    <p>Enter your coupon code if you have one.</p>                                
+                                    <input placeholder="Coupon code" type="text">
+                                    <button type="submit">Apply coupon</button>
+                                </div>    
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="coupon_code right">
+                                <h3>Cart Totals</h3>
+                                <div class="coupon_inner">
+                                   <div class="cart_subtotal">
+                                       <p>Subtotal</p>
+                                       <p class="cart_amount"><i class="fa fa-inr" aria-hidden="true"></i> {{total_cart_price}}</p>
+                                   </div>
+                                   <div class="cart_subtotal ">
+                                       <p>Shipping</p>
+                                       <p class="cart_amount"><span>Flat Rate:</span> <i class="fa fa-inr" aria-hidden="true"></i> {{ total_shipping_charge }} </p>
+                                   </div>
+                                   <a href="#">Calculate shipping</a>
+
+                                   <div class="cart_subtotal">
+                                       <p>Total</p>
+                                       <p class="cart_amount"><i class="fa fa-inr" aria-hidden="true"></i> {{ total_cart_price|add:total_shipping_charge }}</p>
+                                   </div>
+                                   <div class="checkout_btn">
+                                       <a href="{% url 'order_summary' %}">Proceed to Checkout</a>
+                                   </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--coupon code area end-->
+            </form> 
+        </div>     
+    </div>
+     <!--shopping cart area end -->
+
+
+
+
+
+{% include 'common/footer.html' %}

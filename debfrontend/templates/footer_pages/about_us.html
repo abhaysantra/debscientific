@@ -1,0 +1,37 @@
+{% load static %}
+{% include 'common/header.html' %}
+<div class="about-banner">
+    <div class="abt_banner_div"><img src="{% static 'assets/img/bann1.jpg' %}" alt=""></div>
+<div class="text-center">
+<h2>About Us</h2>
+<p><span><a href="{% url 'index' %}">Home</a></span> / <span><a href="{% url 'about_us' %}">About-Us</a></span></p>
+</div>  
+  
+</div>
+
+
+
+<section class="my-account-wrapper section-padding about_sect">
+  
+        	<div class="main container">
+ 
+     <div class="about-page">
+     	<div class="row">
+        <div class="col-xs-12 col-sm-6"> 
+          
+          <h3>{{ about_content.0.title|safe }}</h3>
+          {{ about_content.0.content|safe }}
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <div class="single-img-add sidebar-add-slider">
+           <img src="{{ about_content.0.image.url }}" class="img-responsive">
+          </div>
+        </div>
+    </div>
+      </div>
+
+  </div>
+        </section>
+
+
+{% include 'common/footer.html' %}

@@ -1,0 +1,535 @@
+{% load custom_tags %}
+{% load static %}
+{% include 'common/header.html' %}
+<head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+</head>
+
+<!--product details start-->
+    <div class="product_details mt-20">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-4">
+                   <div class="product-details-tab">
+
+                        <div id="img-1" class="zoomWrapper single-zoom">
+                            <a href="javascript:void(0)">
+                                <img id="zoom1" src="{{ pro_img_det.0.product_details.url }}" alt="big-1">
+                            </a>
+                        </div>
+
+                        <div class="single-zoom-thumb">
+                            <ul class="s-tab-zoom owl-carousel single-product-active" id="gallery_01">
+                                
+                                {% for pro_img_det_row in pro_img_det %}
+                                <li>
+                                    <a href="javascript:void(0)" class="elevatezoom-gallery active" data-update="" data-image="{{ pro_img_det_row.product_details.url }}" data-zoom-image="{{ pro_img_det_row.product_details.url }}">
+                                        <img src="{{ pro_img_det_row.product_details.url }}" alt="zo-th-1"/>
+                                    </a>
+                                </li>
+                                {% endfor %}
+
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    <div class="product_d_right">
+                      
+                           
+                            <h1>{{ product_details.0.product_name }}</h1>
+                            
+                            <div class=" product_ratting">
+                                <ul>
+                                    {% for i in 0|loop_range:product_details.0.avg_rating %}
+                                        <li class="active-blk-cus-ss"><i class="ion-ios-star"></i></li>
+                                    {% endfor %}
+                                    {% for i in 0|loop_range:product_details.0.remaining_rating %}
+                                        <li class="gray-back-cus"><i class="ion-ios-star"></i></li>
+                                    {% endfor %} 
+                                    
+                                    <li class="review"><a href="javascript:void(0)"> (customer review ) </a></li>
+                                </ul>
+                                
+                            </div>
+                            {% if product_details.0.price_available == 'yes' %}
+                            <div class="price_box">
+                                <span id='pro_price_id' class="current_price"><i class="fa fa-inr" aria-hidden="true"></i> {{ product_details.0.sell_price }}</span>
+                                <span class="old_price"><i class="fa fa-inr" aria-hidden="true"></i> {{ product_details.0.mrp_price }}</span>
+                                
+                            </div>
+                            <div class="price_box">
+                                <span class="current_price">
+                                Addon Price : <i class="fa fa-inr" aria-hidden="true"></i>
+                                <span id='addon_price_id' class="current_price">0</span>
+                                </span>
+                                
+                            </div>
+                            {% endif %}
+                            <div class="product_desc">
+                                {{ product_details.0.product_desc | slice:":230" |safe }}...
+                            </div>
+
+                            {% if product_details.0.price_available == 'yes' %}
+                                {% if sub_product_det %}
+                                    
+                                    <div class="col-sm-8 cus-block">
+                                                <select class="form-control" name="addon_product" id="addon_product" onchange="add_addon_product('{{ product_details.0.id }}')">
+                                                    <option value="">Select Addon Product </option>
+                                                    {% for sub_product_row in sub_product_det %}
+                                                    <option value="{{ sub_product_row.id }}">{{ sub_product_row.sub_product_name }}|{{ sub_product_row.sub_product_price }}</option>
+                                                    {% endfor %}                                  
+                                                </select>
+                                    </div>
+
+
+                                
+                                {% endif %}
+
+                           
+                            <div class="product_variant quantity block-cus-ss">
+                                <label>quantity</label>
+                                <input id="single_pro_qty" min="1" max="100" value="1" type="number">  
+                            </div>
+                            {% endif %}
+
+
+        
+                            <!--{% if product_details.0.price_available == 'yes' %}
+                            <div class="cdp js-custom_select">
+                                <div class="jumbotron">
+                                    <select id="addon_product" name="addon_product" onchange="add_addon_product('{{ product_details.0.id }}')" multiple="" class="js-states form-control">
+                                    {% for sub_product_row in sub_product_det %}
+                                        <option value="{{ sub_product_row.id }}">{{ sub_product_row.sub_product_name }}|{{ sub_product_row.sub_product_price }}</option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                                
+
+                            {% endif %} -->
+                 
+                            <!--<div class="cdp js-custom_select">
+                                <button id="addon_product_1" name="addon_product_1" data-type="country" 
+                                    data-place="Addon Product" 
+                                    aria-label="Addon Product" 
+                                    data-val="" aria-expanded="false" aria-haspopup="true" class="js-cdp__open cdp__open" >
+                                    
+                                    Addon Product
+                                </button>
+                                <button class="button" type="button" onclick="check_addon_product('{{ product_details.0.id }}')">Buy Addon</button>
+                            </div> -->
+
+
+                            <div class="add-buy-block">
+                            {% if product_details.0.price_available == 'yes' %}
+                              <button id = 'add_to_cart' type="button" class="button" onclick="single_add_to_cart('{{ product_details.0.id }}')" >Add to cart</button>  
+                              <button id='buy_now' class="button" type="button" onclick="single_product_buy('{{ product_details.0.id }}')" >Buy Now</button>
+                            {% endif %} 
+
+                               <a href="{% url 'product_enquiry_view' product_details.0.id %}" >Enquiry</a>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+    <!--product details end-->
+    
+    <!--product info start-->
+    <div class="product_d_info">
+        <div class="container">   
+            <div class="row">
+                <div class="col-12">
+                    <div class="product_d_inner">   
+                        <div class="product_info_button">    
+                            <ul class="nav" role="tablist">
+                                <li >
+                                    <a class="active" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="false">Description</a>
+                                </li>
+                                <li>
+                                     <a data-toggle="tab" href="#sheet" role="tab" aria-controls="sheet" aria-selected="false">Specification</a>
+                                </li>
+                                <li>
+                                   <a data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews ({{ total_review }})</a>
+                                </li>
+                                 <li>
+                                   <a data-toggle="tab" href="#download" role="tab" aria-controls="reviews" aria-selected="false">Download</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="info" role="tabpanel" >
+                                <div class="product_info_content">
+                                    {{ product_details.0.product_desc |safe }}
+                                </div>    
+                            </div>
+                            <div class="tab-pane fade" id="sheet" role="tabpanel" >
+
+                                <div class="product_d_table">
+                                   <form action="#">
+                                        <table>
+                                            <tbody>
+                                                <!-- <tr>
+                                                    <td class="first_child">Compositions</td>
+                                                    <td>{{ product_details.0.compositions }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="first_child">Styles</td>
+                                                    <td>{{ product_details.0.styles }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="first_child">Properties</td>
+                                                    <td>{{ product_details.0.properties }}</td>
+                                                </tr> -->
+                                                {{ product_details.0.product_specification |safe }}
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+                                <div class="product_info_content">
+                                    {{ product_details.0.product_desc | slice:":230" |safe }}...
+                                </div>    
+                            </div>
+
+                            <div class="tab-pane fade" id="reviews" role="tabpanel" >
+                                <div class="reviews_wrapper">
+                                    <h2>
+                                    {% if total_review != 0 %}
+                                        {{ total_review }} reviews
+                                    {% else %}
+                                        No review
+                                    {% endif %}  for {{ product_details.0.product_name }}</h2>
+                                    <div class="reviews_comment_box coment-cus-block">
+                                        
+                                        <div class="comment_text">
+                                            {% if total_review != 0 %}
+                                                {% for review_list_row in review_list %}
+                                            <div class="reviews_meta">
+                                                <div class="comment_thmb">
+                                                    {% if review_list_row.profile_image %}
+                                                    <img src="{{ review_list_row.profile_image.url }}" alt="">
+                                                    {% else %}
+                                                    <img src="{% static 'assets/img/blog/comment2.jpg' %}" alt="">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="star_rating normal-cus">
+                                                    <ul>
+                                    {% for i in 0|loop_range:review_list_row.rating %}
+                                        <li class="active-blk-cus-ss"><i class="ion-ios-star"></i></li>
+                                    {% endfor %}
+                                    {% for i in 0|loop_range:review_list_row.remaining_rating %}
+                                        <li><i class="ion-ios-star"></i></li>
+                                    {% endfor %}      
+                                                    </ul>   
+                                                </div>
+                                                <p><strong>{{review_list_row.full_name}}</strong> - {{review_list_row.date}}</p>
+                                                <p class="massege-cus">{{review_list_row.message}}</p>
+                                                <!-- <span>roadthemes</span> -->
+                                            </div>
+                                                {% endfor %}
+                                            {% else %}
+                                            No Reviews Found
+                                            {% endif %}
+
+                                        
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="comment_title">
+                                        <h2>Add a review </h2>
+                                        <p>Your email address will not be published.  Required fields are marked </p>
+                                    </div>
+                                    
+                                    <div class="product_review_form review-cus-but">
+                                        <form action="" id="review_form">{% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label for="review_comment">Your review </label>
+                                                    <textarea name="review_comment" id="review_comment" ></textarea>
+                                                </div> 
+                                                <input type="hidden" id="hidden_product_id" value="{{ product_details.0.id }}">
+                                                <!-- <div class="col-lg-6 col-md-6">
+                                                    <label for="author">Name</label>
+                                                    <input id="author"  type="text">
+
+                                                </div> 
+                                                <div class="col-lg-6 col-md-6">
+                                                    <label for="email">Email </label>
+                                                    <input id="email"  type="text">
+                                                </div> -->  
+                                            </div>
+                                            <div class="product_ratting mb-10">
+                                       <h3>Your rating</h3>
+                                        <div class="rating">
+    <input type="radio" id="star5" name="review_rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+    <!-- <input type="radio" id="star4half" name="review_rating" value="4.5" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label> -->
+    <input type="radio" id="star4" name="review_rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+    <!-- <input type="radio" id="star3half" name="review_rating" value="3.5" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label> -->
+    <input type="radio" id="star3" name="review_rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+    <!-- <input type="radio" id="star2half" name="review_rating" value="2.5" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label> -->
+    <input type="radio" id="star2" name="review_rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+    <!-- <input type="radio" id="star1half" name="review_rating" value="1.5" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label> -->
+    <input type="radio" id="star1" name="review_rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+    <!-- <input type="radio" id="starhalf" name="review_rating" value="0.5" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label> -->
+</div>
+
+<span id="error_star_rating" style="color: red;"></span>
+                                    </div>
+                                    
+                                            <button type="button" onclick="review_form_validation()">Submit</button>
+                                         </form>   
+                                    </div> 
+                                </div>     
+                            </div>
+
+                             <div class="tab-pane fade" id="download" role="tabpanel" >
+                                <div class="reviews_wrapper">
+                               
+                                    <div class="reviews_comment_box">
+                                       <div class="container">
+                                        <div class="row">
+
+                            {% for pro_down_det_row in pro_down_det %}
+                            <div class="col-md-3">
+                                <a href="{{ pro_down_det_row.download_image.url }}" download>
+                                    <img src="{{ pro_down_det_row.download_image.url }}" alt="W3Schools" width="104" height="142">  
+                                </a>       
+                            </div>   
+                            {% endfor %}            
+                                            
+                                        </div>
+                                           
+                                       </div>
+                                    
+                                        
+                                    </div>
+
+                                </div>     
+                            </div>
+                        </div>
+                    </div>     
+                </div>
+            </div>
+        </div>    
+    </div>  
+    <!--product info end-->
+    
+    <!--product area start-->
+    <section class="product_area mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section_title">
+                        <h2><span> <strong>Related</strong>Products</span></h2>
+                    </div>
+                    <div class="product_carousel product_column5 owl-carousel">
+
+                        {% for related_products_row in related_products %}
+
+                         <div class="single_product">
+                            <div class="product_thumb">
+                                <a class="primary_img" href="{% url 'product_details' related_products_row.id related_products_row.product_slug %}">
+                                    {% for pro_img_row in product_image_list %}
+                                        {% if pro_img_row.product_id == related_products_row.id %}
+                                    <img src="{{ pro_img_row.product_list.url }}" alt="">
+                                        {% endif %}
+                                    {% endfor %}
+                                </a>
+                                <!-- <div class="action_links">
+                                    {% if related_products_row.price_available == 'yes' %}
+                                    <ul>
+                                        {% if 'user_session_id' in request.session %}
+                                        
+                                            {% if related_products_row.id in product_wish_list %}
+                                                <li class="wishlist wp_color">
+                                                    <a href="javascript:void(0)" onclick="remove_from_wishlist('{{ related_products_row.id }}')" title="Remove from Wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                                </li>
+
+                                            {% else %}
+                                             <li class="wishlist">                    
+                                                <a href="javascript:void(0)" onclick="add_to_wishlist('{{ related_products_row.id }}')" title="Add to Wishlist"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                            </li>
+
+                                         {% endif %} 
+                                        
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                </div> -->
+                            </div>
+                            <div class="product_content">
+                                <div class="product_ratings">
+                                    <ul>
+                                    {% for i in 0|loop_range:related_products_row.avg_rating %}
+                                        <li class="active-blk-cus-ss"><i class="ion-ios-star"></i></li>
+                                    {% endfor %}
+                                    {% for i in 0|loop_range:related_products_row.remaining_rating %}
+                                        <li class="gray-back-cus"><i class="ion-ios-star"></i></li>
+                                    {% endfor %} 
+                                    </ul>
+                                </div>
+
+                                <div class="product_name">
+                                <h3><a href="{% url 'product_details' related_products_row.id related_products_row.product_slug %}">{{ related_products_row.product_name }}</a></h3>
+                                <p class="manufacture_product">
+                                     {% for pro_cate_list in all_category %}
+                                        {% if pro_cate_list.id == related_products_row.category_id %}
+                                            <a href="{% url 'product_list' pro_cate_list.id pro_cate_list.category_slug %}">
+                                            {{ pro_cate_list.category_name }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}        
+                                    
+                                </p>
+                            </div>
+
+
+                                <div class="product_footer d-flex align-items-center">
+                                    {% if related_products_row.price_available == 'yes' %}
+                                    <div class="price_box">
+                                        <span class="current_price"><i class="fa fa-inr" aria-hidden="true"></i>{{ related_products_row.sell_price }}</span>
+                                        <span class="old_price"><i class="fa fa-inr" aria-hidden="true"></i>{{ related_products_row.mrp_price }}</span>   
+                                    </div>
+                                    <!--<div class="add_to_cart">
+                                        <a href="javascript:void(0)" onclick="product_add_to_cart('{{ related_products_row.id }}','1')" title="add to cart"><span class="lnr lnr-cart"></span></a>
+                                    </div> -->
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+            </div> 
+                   
+        </div>
+    </section>
+    <!--product area end-->
+
+
+
+
+<script type="text/javascript">
+
+        function show_product(value){
+            $('#show_addon').html(value);
+        }
+
+        function review_valid()
+        {   
+            var check_ratings = $("input[name='review_rating']:checked");
+            var review = $('#review_comment').val();
+            
+            if(review=='')
+            {
+                $('#review_comment').addClass('red_border');
+            }
+            else
+            {
+                $('#review_comment').removeClass('red_border');
+            }
+
+            if(check_ratings.length == '')
+            {
+                $('#error_star_rating').html('Enter your ratings');
+            }
+            else
+            {
+                $('#error_star_rating').html('');
+            }
+        }
+        function review_form_validation()
+        {
+            $('#review_form').attr('onchange', 'review_valid()');
+            $('#review_form').attr('onkeyup', 'review_valid()');
+            $('#review_form').attr('onfocus', 'review_valid()');
+
+            review_valid();
+
+              if ($('#review_form .red_border').size() > 0)
+              {
+                $('#review_form .red_border:first').focus();
+                return false;
+              }
+              else 
+              {
+                  // $('#sign_up_form').submit();
+                var ratings = $("input[name='review_rating']:checked").val();
+                var review = $('#review_comment').val();
+                var product_id = $('#hidden_product_id').val();
+                // alert(product_id);
+                 
+                $.ajax({
+                  url:"{% url 'review_submit' %}",
+                  data:{ratings:ratings,review:review,product_id:product_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                  dataType:'json',
+                  type:'post',
+                  success: function(data)
+                  {
+                    if(data.result == 1)
+                    {
+                      Swal.fire({
+                        position: 'middle',
+                        type: 'success',
+                        title: 'Review Submitted Successfully',
+                        showConfirmButton: false,
+                        timer: 2500
+                      })
+                      location.reload();
+                    }
+                    if(data.result == 0)
+                    {
+                        Swal.fire(
+                          'Oops!',
+                          'Please login !',
+                          'warning'
+                        )
+                        $('#review_form')[0].reset();
+                    }
+                    if(data.result == 2)
+                    {
+                        Swal.fire(
+                          'Error!',
+                          'You can not review on this product',
+                          'warning'
+                        )
+                        $('#review_form')[0].reset();
+                    }
+                     
+                  }
+                });
+  
+              }
+        }
+
+    function add_addon_product(product_id)
+    {
+        var sub_product_list = $('#addon_product').val();
+        // alert(sub_product_list); 
+        $.ajax({
+            type: "POST",
+            url:"{% url 'get_addon_total_price' %}",
+            data: {product_id:product_id, sub_product_list:sub_product_list, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType: "json",
+            async: false,
+            
+            success: function(dataset)
+            {
+                // alert(dataset.result);
+                // $('#pro_price_id').html(dataset.result);
+                $('#addon_price_id').html(dataset.result);
+                $('#add_to_cart').prop('disabled', false);
+                $('#buy_now').prop('disabled', false);
+                
+            }
+        });
+    }
+
+</script>
+
+{% include 'common/footer.html' %}

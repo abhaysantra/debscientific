@@ -1,0 +1,98 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+<div class="main-content-wrapper">
+                <div class="page-inner ptb--80">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6 col-md-10">
+                                <div class="form-box">
+                                    <h1>Login</h1>
+                                    <p>Please login using account details.</p>
+                                    {% for message in messages %}
+                                    <div style="background-color:#238de9;;color: white;" class="alert alert-{{ message.tags }}">
+                                        <a class="close" href="#" data-dismiss="alert">×</a>
+                                        {{ message }}
+                                    </div>
+                                    {% endfor %}
+                                    
+                                    <form class="form" id="login_form_id" action="{% url 'user_login_action' %}" method="post">{% csrf_token %}
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="email" name="login_email" id="login_email" class="sadia-input-form" placeholder="Email">
+                                            </div>
+                                        </div>
+                                        <div class="sadia-form-group row">
+                                            <div class="col-md-12 col-lg-12 col-12">
+                                                <input type="password" name="login_password" id="login_password" class="sadia-input-form" placeholder="Password">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="sadia-form-group row">
+                                            <div class="col-lg-12 col-12">
+                                                <a href="{% url 'forgot_password' %}" class="forgot-pass">Forgot your password?</a>
+                                                <button type="button" onclick="login_form_validation()" class="btn btn--large btn-style-3">login</button>
+                                     
+                                            </div>
+                                           
+                                        </div>
+                                    </form>
+                                     <div class="sign-block-up">
+                                            <a href="{% url 'register' %}">Sign Up</a>
+                                            </div>
+                                    <a class="create-account-link" href="{% url 'register' %}">New Here? Create an account</a>
+                                </div>
+                            </div>
+                        </div>   
+                    </div>   
+                </div>
+            </div>
+
+<script type="text/javascript">
+        function login_validation()
+        {  
+            if($('#login_email').val()=="")
+            {
+                $('#login_email').addClass("red_border");  
+            }
+            else
+            {
+                $("#login_email").removeClass("red_border");
+            }
+
+            if($('#login_password').val()=="")
+            {
+                $('#login_password').addClass("red_border");  
+            }
+            else
+            {
+                $("#login_password").removeClass("red_border");
+            }
+
+            
+        }
+
+        function login_form_validation()
+        {
+            $('#login_form_id').attr('onchange', 'login_validation()');
+            $('#login_form_id').attr('onkeyup', 'login_validation()');
+            $('#login_form_id').attr('onfocus', 'login_validation()');
+
+            login_validation();
+
+              if ($('#login_form_id .red_border').size() > 0)
+              {
+                $('#login_form_id .red_border:first').focus();
+                return false;
+              }
+              else 
+              {
+                  $('#login_form_id').submit();
+              }
+        }
+</script>
+
+
+
+
+{% include 'common/footer.html' %}

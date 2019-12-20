@@ -1,0 +1,13 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Order Invoice {{ request.session.admin_session_id }}</h1>
+<p>My first paragraph. {{ name }} </p>
+<p>Text data : {{ text }}</p>
+<img src="{% static "debadmin/no-image.jpg" %}" alt="My image">
+
+
+</body>
+</html>

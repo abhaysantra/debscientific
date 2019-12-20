@@ -1,0 +1,131 @@
+{% include 'common/header.html' %}
+
+<div class="container"> 
+<div class="row">	
+<div class="col-md-6 offset-md-3">
+<div class="enquiry-block">
+ 
+  <form id="contact" action="{% url 'product_enquiry_submission' %}" method="post">{% csrf_token %}
+    <h3>Enquiry Form</h3>
+    <h4>Contact us today, and get reply within 24 hours!</h4>
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+          <a class="close" href="#" data-dismiss="alert">×</a>
+          {{ message }}
+      </div>
+    {% endfor %}
+    <fieldset>
+      <input placeholder="Your name" id="full_name" name="full_name" type="text" tabindex="1" required autofocus>
+    </fieldset>
+    <fieldset>
+      <input placeholder="Your Email Address" id="email" name="email" type="email" tabindex="2" required>
+    </fieldset>
+    <fieldset>
+      <input placeholder="Your Phone Number" id="phone_number" name="phone_number" type="tel" tabindex="3" required>
+    </fieldset>
+    <fieldset>
+      <input placeholder="Your Web Site starts with http://" id="web_address" name="web_address" type="url" tabindex="4" required>
+    </fieldset>
+    <fieldset>
+      <textarea placeholder="Type your Message Here...." id="message" name="message" tabindex="5" required></textarea>
+      <input type="hidden" name="hidden_pro_id" value="{{ enquiry_product_id }}">
+    </fieldset>
+    <fieldset>
+      <button style="cursor: pointer;width: 100%;border: none;background: #238de9;color: #FFF;margin: 0 0 5px;padding: 10px;font-size: 15px;" type="button" id="contact-submit" onclick="save_enquiry()">Send</button>
+    </fieldset>
+  </form>
+ 
+  </div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+  function field_validation()
+  {
+    var emailExpression = /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i;
+    var mobileExpression =  /^\d{10}$/;
+
+    var full_name=$('#full_name').val();
+    var email=$('#email').val();
+    var phone_number=$('#phone_number').val();
+    var web_address=$('#web_address').val();
+    var message=$('#message').val();
+      
+    if($('#full_name').val()=="")
+     {
+        $('#full_name').addClass("red_border");
+     }
+    else
+     {
+        $("#full_name").removeClass("red_border");
+     }
+
+    if (email == "") 
+    {
+        $('#email').addClass('red_border');
+    }
+    else 
+    {
+        if(!emailExpression.test(email))
+        {
+            $('#email').addClass('red_border');
+            $('#check_email').html('Enter your proper email id');
+        }
+        else
+        {
+            $('#email').removeClass('red_border');
+            $('#check_email').html('');
+        }
+    }
+
+    if(phone_number=="")
+    {
+        $('#phone_number').addClass("red_border");
+    }
+    else
+    {
+    if(!mobileExpression.test(phone_number))
+    {
+        $('#phone_number').addClass('red_border');
+        $('#check_phone').html('Check your mobile number');
+    }
+    else
+    {
+        $('#phone_number').removeClass('red_border');
+        $('#check_phone').html('');
+    }
+    }   
+    if($('#message').val()=="")
+     {
+        $('#message').addClass("red_border");
+     }
+    else
+     {
+        $("#message").removeClass("red_border");
+     }
+}
+
+function save_enquiry()
+{
+    $('#contact').attr('onchange', 'field_validation()');
+    $('#contact').attr('onkeyup', 'field_validation()');
+    $('#contact').attr('onfocus', 'field_validation()');
+
+    field_validation();
+
+    if ($('#contact .red_border').size() > 0)
+    {
+        $('#contact .red_border:first').focus();
+        return false;
+    } 
+    else 
+    {
+        $('#contact').submit();
+    }
+} 
+
+</script>
+
+
+{% include 'common/footer.html' %}

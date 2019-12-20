@@ -1,0 +1,39 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+ <section class="my-account-wrapper section-padding dashboard_section">
+        	<div class="container-fluid">
+             <div class="ch-cont">
+        		<div class="row clearfix">
+
+
+        			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+
+        			{% include 'dashboard/dashboard_sidemenu.html' %}
+                    </div>
+        			<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                        <div class="myaccount-widget">
+                            <h3 class="title">My wallet</h3>
+                              
+                            <div class="form-container">
+                                <div class="refer text-center">
+                                    <img src="{% static 'assets/img/wallet.png' %}">
+                                    <h3>Your Amount <span>15018.795</span> <!-- <span>Rs. 15018.795</span> --></h3>
+                                </div>
+                            
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    </div>
+        		</div>
+        	</div>
+        </section>
+
+
+
+
+{% include 'common/footer.html' %}

@@ -1,0 +1,102 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+
+ <!--breadcrumbs area start-->
+    <div class="breadcrumbs_area">
+        <div class="container">   
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb_content">
+                        <ul>
+                            <li><a href="index.php">Home</a></li>
+                            <li>Wishlist</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>         
+    </div>
+    <!--breadcrumbs area end-->
+    
+    
+     <!--wishlist area start -->
+    <div class="wishlist_area mt-30">
+                <div class="container">   
+                    <form action="#"> 
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table_desc wishlist">
+                                    <div class="cart_page table-responsive">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    
+                                                    <th class="product_thumb">Image</th>
+                                                    <th class="product_name">Product</th>
+                                                    <th class="product-price">Price</th>
+                                                    <th class="product_quantity">Stock Status</th>
+                                                    <th class="product_total">Add To Cart</th>
+                                                    <th class="product_remove">Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if total_wish_item > 0 %}
+                                                {% for user_wish_row in user_wish_list %}
+                                                <tr>
+                                                   
+                                                    <td class="product_thumb"><a href="#">
+                                                        {% for cart_pro_img in product_image_list %}
+                                                        {% if cart_pro_img.product_id == user_wish_row.product_id %}
+                                                        <img src="{{ cart_pro_img.product_list.url }}" alt="">
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </a></td>
+
+                                                    <td class="product_name"><a href="#">{{ user_wish_row.product_name }}</a></td>
+
+                                                    <td class="product-price"><i class="fa fa-inr" aria-hidden="true"></i>{{ user_wish_row.sell_price }}</td>
+                                                    <td class="product_quantity">
+                                                    {% if user_wish_row.available_qty > 5 %}
+                                                        In Stock
+                                                    {% else %}
+                                                         Out Of Stock
+                                                    {% endif %}
+                                                </td>
+                                                    <!-- <td class="product_total"><a href="#">Add To Cart</a></td> <span class="lnr lnr-cart"></span> -->
+
+                                                    <td class="product_total">
+                                                        <!-- <a href="javascript:void(0)" onclick="product_add_to_cart('{{ user_wish_row.product_id }}')" title="add to cart">Add To Cart</a> -->
+                                                        <a href="javascript:void(0)" onclick="wish_product_add_to_cart('{{ user_wish_row.product_id }}','1')" title="add to cart">Add To Cart</a>
+                                                    </td>
+                                                    <td class="product_remove"><a href="javascript:void(0)" onclick="remove_from_wishlist('{{ user_wish_row.product_id }}')">X</a></td>
+
+
+                                                </tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <tr>
+                                                    <td>No Product In Wishlist</td>
+                                                </tr>
+                                                {% endif %}
+
+                                                
+                                            </tbody>
+                                        </table>   
+                                    </div>  
+
+                                </div>
+                             </div>
+                         </div>
+
+                    </form> 
+                    
+                    
+                </div>
+            </div>
+     <!--wishlist area end -->
+
+
+
+
+{% include 'common/footer.html' %}

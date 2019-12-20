@@ -1,0 +1,51 @@
+<?php include("header.php"); ?>
+
+
+
+<div class="check_shedul">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="shedul_info">
+          <ul>
+            <li class="active"><p>Order Summery</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Delivery Address</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Place Order</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Payment</p></li>
+            <li class="active"></li>
+            <li class="active"><p>Completation</p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="completation">
+<div class="container">
+  <div class="box-complete">
+  <p>Your order has been processed</p>
+<h3>Thank You For Choosing Us<br>We Are Very Happy to Serve You</h3>
+<div class="smile-img"><img src="assets/img/smile.png"></div> 
+</div>
+
+
+
+<div class="continue-shopping">
+<a href="#">Continue Shopping</a> 
+  
+</div>
+</div>    
+</div>
+
+
+
+
+
+
+<?php include("footer.php");?>

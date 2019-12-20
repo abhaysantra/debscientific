@@ -1,0 +1,36 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+<div class="about-banner">
+<img src="{% static 'assets/img/bann1.jpg' %}" alt="">
+<div class="text-center">
+<h2>Gallery</h2>
+<p><span><a href="{% url 'index' %}">Home</a></span> / <span><a href="{% url 'gallery_view' %}">Gallery</a></span></p>
+</div>  
+  
+</div>
+
+
+<section id="gallery">
+  <div class="container">
+    <div id="image-gallery">
+      <div class="row">
+      {% for gallery_row in gallery_det %}
+        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 image">
+          <div class="img-wrapper">
+            <a href="{{ gallery_row.image.url }}"><img src="{{ gallery_row.image.url }}" class="img-responsive"></a>
+            <div class="img-overlay">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+        
+
+      </div><!-- End row -->
+    </div><!-- End image gallery -->
+  </div><!-- End container --> 
+</section>
+
+
+{% include 'common/footer.html' %}

@@ -1,0 +1,36 @@
+
+{% load static %}
+{% include 'common/header.html' %}
+
+<div class="about-banner">
+<img src="{% static 'assets/img/bann1.jpg' %}" alt="">
+<div class="text-center">
+<h2>Privacy Policy</h2>
+<p><span><a href="{% url 'index' %}">Home</a></span> / <span><a href="{% url 'privacy_policy_view' %}">Privacy Policy</a></span></p>
+</div>  
+  
+</div>
+
+
+<section class="my-account-wrapper section-padding">
+        	<div class="main container">
+
+     <div class="about-page">
+        <div class="col-xs-12"> 
+          
+          <h3>Privacy <span class="text_color"> Policy</span></h3>
+
+          {{ policy_det.0.privacy_policy|safe }}
+         
+        </div>
+     
+      </div>
+
+  </div>
+
+        </section>
+
+
+
+
+{% include 'common/footer.html' %}

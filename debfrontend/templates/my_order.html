@@ -1,0 +1,216 @@
+{% load static %}
+{% include 'common/header.html' %}
+
+ <section class="my-account-wrapper section-padding dashboard_section">
+        	<div class="container-fluid">
+             <div class="ch-cont">
+        		<div class="row clearfix">
+
+
+        			<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">        			
+                    {% include 'dashboard/dashboard_sidemenu.html' %}
+                    </div>
+
+        			<div class="col-lg-9 col-md-8 col-sm-8 col-xs-12">
+                         <div class="myaccount-widget">
+                        <h3 class="title">My Order</h3>
+                        
+                        {% for order_list_row in order_list %}
+                        <div class="order-box">
+                            <div class="order-header">
+                                <div class="pull-left">
+                                    <a target="_blank" title="Click to more details" href="{% url 'order_details_view' order_list_row.id order_list_row.order_unique_id %}" class="order-id">Order ID <span class="ml-20">{{ order_list_row.order_unique_id }}</span></a>
+                                </div>
+                                <div class="pull-right"><a href="{% url 'order_details_view' order_list_row.id order_list_row.order_unique_id %}" target="_blank" class="track-btn"><i class="fa fa-map-marker" aria-hidden="true"></i> Track</a>
+                                </div>
+                            </div>
+                            <div class="order-details">
+
+
+
+                                {% for order_details_row in order_details_list %}
+                                {% if order_details_row.order_id == order_list_row.id %}
+                                <div class="single-order-his row">
+                                    <div class="col-md-4 col-sm-6 col-6">
+                                        <div class="order-img">
+                                            {% for pro_img_row in product_image_list %}
+                                            {% if pro_img_row.product_id == order_details_row.order_product_id %}
+                                            <img src="{{ pro_img_row.product_list.url }}" class="img-responsive">
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 col-6">
+                                        <div class="order-details-text cash-delivery"> <b><i class="fa fa-inr"></i><span>{{ order_details_row.order_product_price }}</span></b>
+                                            <p>
+                                                {% if order_list_row.payment_method == 'cod' %}
+                                                    Cash on delivery
+                                                {% else %}
+                                                    Online
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div> 
+                                    <!-- <a href="#" class="return-btn reorder"><i class="fa fa-undo" aria-hidden="true"></i> Reorder</a> -->
+
+                                     <div class="order-details-text cancel-block">
+                                        {% if order_details_row.order_product_status == 'Pending' %} 
+                                            <a href="javascript:void(0)" onclick="cancel_your_order('{{ order_details_row.id }}');" class="return-btn"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
+                                        {% endif %}
+
+                                    </div>
+                                    {% if order_details_row.order_product_status == 'Cancelled' %}
+                                       <span class="order-cus-block"> Order Cancelled</span>
+                                    {% else %}
+                                        <p class="cancel-cus">{{ order_details_row.order_product_status }}</p>
+                                    {% endif %}
+                                    <div class="order-details-text">
+                                            <ul>
+        <a href="{% url 'product_details' order_details_row.order_product_id order_details_row.product_slug %}">
+                                                    <li><b>{{ order_details_row.product_name }}</b>
+                                                    </li>
+                                                </a>
+                                               
+                                            </ul>
+                                        </div>
+                                        <div class="order-cus-block-ss">
+                                             <ul>
+                                            
+                                                <li>Qty - {{ order_details_row.order_product_qty }}</li>
+                                                <li>Deb Scientific</li>
+                                            </ul>
+                                            
+                                        </div>
+                                </div>
+                                    {% endif %}
+                                {% endfor %}
+                                   
+
+
+
+                                <div class="clearfix"></div>
+                                <div class="order-footer">
+                            <div class="pull-left"><span>Order On <b class="ml-10">
+                                {{ order_list_row.order_created_date }} </b></span>
+                            </div>
+                            <br>
+                            <!-- <div class="pull-left"><span>Delivery Time  <b class="ml-10">
+                                Today Evening</b></span>
+                            </div> -->
+                            <div class="pull-right"><span>Order Total <b><i class="fa fa-inr"></i>
+                                {{ order_list_row.order_total_price }}</b></span>
+                            </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+
+                        
+                    </div>
+                    </div>
+
+                    </div>
+        		</div>
+        	</div>
+        </section>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: bisque;">
+        <h5 class="modal-title" id="exampleModalLabel">Enter Reason Of Cancellation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" id="cancel_form" action="">
+      <div class="modal-body">
+       <textarea class="form-control" name="cancel_reason" id="cancel_reason" rows="2"  style="line-height: 4.5;"></textarea>
+
+       <input type="hidden" name="order_det_id" id="order_det_id" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" onclick="cancel_form_submit()" class="btn btn-primary">Submit</button>
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+function cancel_your_order(order_det_id)
+  {
+    if(confirm('Are you sure ?'))
+    {
+      $('#cancelModal').modal('show');
+      $('#order_det_id').val(order_det_id);
+    }
+  }
+
+  function cancel_form_submit()
+  {
+    if($('#cancel_reason').val()=='')
+    {
+        alert('Please Enter Reason');
+        $('#cancel_reason').focus();
+    }
+    else
+    {
+        var cancel_reason = $('#cancel_reason').val();
+        var order_det_id = $('#order_det_id').val();
+        $.ajax({
+          url:"{% url 'cancel_reason_submit' %}",
+          data:{order_det_id:order_det_id,cancel_reason:cancel_reason,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+          dataType:'json',
+          type:'post',
+          success: function(data)
+          {
+            $('#cancelModal').modal('hide');
+            if(data.result == 1)
+            {
+              cancel_status_change(order_det_id);
+            }
+          }
+        });
+    }
+  }
+
+  function cancel_status_change(order_det_id)
+  {
+    $.ajax({
+      url:"{% url 'cancel_single_order' %}",
+      data:{order_det_id:order_det_id,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType:'json',
+      type:'post',
+      success: function(data)
+      {
+        if(data.result == 1)
+        {
+          Swal.fire({
+            position: 'middle',
+            type: 'success',
+            title: 'Order Cancelled Successfully',
+            showConfirmButton: false,
+            timer: 2500
+          })
+        }
+        location.reload(); 
+      }
+    });
+  }
+</script>
+
+
+
+{% include 'common/footer.html' %}

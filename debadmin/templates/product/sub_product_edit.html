@@ -1,0 +1,180 @@
+{% load static %}
+{% include 'common/admin_header.html' %}
+{% include 'common/admin_leftmenu.html' %}
+
+<script src='//cdn.tinymce.com/4/tinymce.min.js'></script>
+<style type="text/css">
+    .thumb-image{float:left;width:100px;position:relative;padding:5px;}
+</style>
+<script type="text/javascript">
+    tinymce.init({
+      selector: ".tinyarea",
+      theme: "modern",
+      menubar: "edit insert tools",
+      plugins: [
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "searchreplace wordcount visualblocks visualchars code fullscreen",
+        "insertdatetime media nonbreaking save table contextmenu directionality",
+        "emoticons template paste textcolor colorpicker textpattern imagetools"
+      ],
+      toolbar1: "undo redo | styleselect | bold italic| forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link preview",
+      image_advtab: true
+    });
+  </script>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>Sub Product Edition of {{ product_name }}</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'debadmin_index' %}"><i class="fa fa-dashboard" aria-hidden="true"></i>Dashboad</a></li>
+            <li class="active">Sub Product Edit</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12 table-responsive">
+                <div class="box">
+                    <div class="box-header">
+                        <!--<h3 class="box-title">Category List</h3>-->
+                       <!--  <ul class="nav nav-tabs">
+                           <li class="active"><a data-toggle="tab" href="#vital_info">Vital Info</a></li>
+                          
+                       </ul> -->
+
+                    </div>
+                    <div class="clearfix"></div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="tab-content">
+
+
+                                <div id="vital_info" >
+                                    <form id="sub_product_edit_form" action="{% url 'sub_product_update' %}" role="form" method="post" enctype="multipart/form-data"> {% csrf_token %}
+
+                                        <div class="form-group" >
+                                            <label for="sub_product_name_1" class="col-sm-2 control-label">Sub Product Name  <span style="color:red">*</span></label>
+                                            <div class="col-sm-8">
+                                                <input class="form-control" type="text"  name="sub_product_name" id="sub_product_name" value="{{ sub_product_det.0.sub_product_name }}" style="margin-bottom:12px">
+                                            </div>
+                                        </div>    
+                                        
+                                        <div class="clearfix"></div>
+
+                                        <div class="form-group" >
+                                            <label for="sub_product_price_1" class="col-sm-2 control-label">Sub Product Price  <span style="color:red">*</span></label>
+                                            <div class="col-sm-8">
+                                                <input class="form-control" type="text"  name="sub_product_price" id="sub_product_price" value="{{ sub_product_det.0.sub_product_price }}" style="margin-bottom:12px">
+                                            </div>
+                                        </div>
+                                            
+                                        <div class="clearfix"></div>
+                                        <div class="form-group" >
+                                            <label for="sub_product_desc_1" class="col-sm-2 control-label">Sub Product Description  <span style="color:red">*</span></label>
+                                            <div class="col-sm-8">
+
+                                                
+                                                <textarea class="tinyarea" name="sub_product_desc" id="sub_product_desc" style="height:100px">{{ sub_product_det.0.sub_product_desc }}</textarea>
+                                            </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+
+                                </div>
+                                
+                                <input type="hidden" value="{{ sub_product_det.0.id }}" name="sub_product_id" >
+                                <input type="hidden" value="{{ sub_product_det.0.product_id }}" name="product_id" >
+                                
+                            
+                                <div class="box-footer" style="margin-top: 10px">
+                                    <button type="button" class="btn btn-primary" onclick="form_validation()"> Submit</button>
+                                    <a href="{% url 'sub_product_list_view' sub_product_det.0.product_id %}" class="btn btn-danger" style="margin-left:12px">Cancel</a>
+                                </div>
+                            
+
+
+
+
+                            </form>
+
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+</div>
+
+<script type="text/javascript">
+    function validate()
+    {   
+        var sub_product_name = $('#sub_product_name').val();
+        var sub_product_price = $('#sub_product_price').val();
+        var sub_product_desc = $('#sub_product_desc').val();
+        // alert(sub_product_name+sub_product_price+sub_product_desc);
+        if(sub_product_name == "")
+              {
+                $('#sub_product_name').addClass("red_border");  
+                // $('#sub_product_name').html('Enter Proper Sub Product Name');
+              }
+        else
+              {
+                $("#sub_product_name").removeClass("red_border");
+                // $("#sub_product_name").html("");
+              }
+        if(sub_product_price != "")
+        {
+            if((isNaN(sub_product_price)))
+                  {
+                    $('#sub_product_price').addClass("red_border");  
+                  }
+            else
+                  {
+                    $("#sub_product_price").removeClass("red_border");
+                  }
+        }
+        else
+        {
+           $('#sub_product_price').addClass("red_border"); 
+        }
+        // if(sub_product_desc == "")
+        //       {
+        //         $('#sub_product_desc').addClass("red_border");  
+        //       }
+        // else
+        //       {
+        //         $("#sub_product_desc").removeClass("red_border");
+        //       }
+    }
+    
+    function form_validation()
+    {
+        $('#sub_product_edit_form').attr('onchange', 'validate()');
+        $('#sub_product_edit_form').attr('onkeyup', 'validate()');
+        $('#sub_product_edit_form').attr('onfocus', 'validate()');
+
+        validate();
+        if ($('#sub_product_edit_form .red_border').size() > 0)
+          {
+            $('#sub_product_edit_form .red_border:first').focus();
+            return false;
+          }
+          else 
+          {
+            $('#sub_product_edit_form').submit();
+          }
+    }
+
+</script>
+
+{% include 'common/admin_footer.html' %}
